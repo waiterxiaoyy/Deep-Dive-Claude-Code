@@ -322,6 +322,48 @@ process.on('SIGTERM', async () => {
   process.exit(0);
 });`,
   },
+  ch13: {
+    filename: "agents/s13_hidden_features.ts",
+    source: `// Ch13: 隐藏功能与 Feature Flag 体系
+// 30+ Feature Flags · 209 处调用 · 199 个文件
+
+// === 1. feature() 编译时门控 ===
+import { feature } from 'bun:bundle'
+// ant 构建: feature('BUDDY') → true → 代码保留
+// external 构建: feature('BUDDY') → false → DCE 移除
+
+// === 2. Buddy 电子宠物 ===
+const SPECIES = ['duck','goose','blob','cat','dragon','octopus',
+  'owl','penguin','turtle','snail','ghost','axolotl',
+  'capybara','cactus','robot','rabbit','mushroom','chonk'] // 18 种
+const RARITY_WEIGHTS = { common:60, uncommon:25, rare:10, epic:4, legendary:1 }
+
+function isBuddyTeaserWindow(): boolean {
+  const d = new Date();
+  return d.getFullYear() === 2026 && d.getMonth() === 3 && d.getDate() <= 7;
+}
+
+// === 3. Kairos 助手模式 ===
+// kairosEnabled: 主动循环 + 频道通知 + Cron + 记忆整合
+function isGateOpen(): boolean {
+  if (getKairosActive()) return false // KAIROS uses disk-skill dream
+  return isAutoDreamEnabled()
+}
+
+// === 4. Ultraplan 远程规划 ===
+const ULTRAPLAN_TIMEOUT_MS = 30 * 60 * 1000 // 30 分钟
+function getUltraplanModel() {
+  return getFeatureValue('tengu_ultraplan_model', opus46.firstParty)
+}
+
+// === 5. Undercover 卧底模式 ===
+function isUndercover(): boolean {
+  if (USER_TYPE === 'ant') {
+    return getRepoClassCached() !== 'internal' // 非内部仓库 → ON
+  }
+  return false
+}`,
+  },
 };
 
 interface ChapterDetailClientProps {

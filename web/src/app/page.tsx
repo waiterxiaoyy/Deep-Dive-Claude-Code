@@ -11,6 +11,7 @@ const LAYER_BG: Record<string, string> = {
   tools: "border-emerald-500/30 hover:border-emerald-500/60 hover:shadow-emerald-500/10",
   context: "border-purple-500/30 hover:border-purple-500/60 hover:shadow-purple-500/10",
   ecosystem: "border-red-500/30 hover:border-red-500/60 hover:shadow-red-500/10",
+  hidden: "border-yellow-500/30 hover:border-yellow-500/60 hover:shadow-yellow-500/10",
 };
 
 const LAYER_DOT: Record<string, string> = {
@@ -18,6 +19,7 @@ const LAYER_DOT: Record<string, string> = {
   tools: "bg-emerald-500",
   context: "bg-purple-500",
   ecosystem: "bg-red-500",
+  hidden: "bg-yellow-500",
 };
 
 const LAYER_GLOW: Record<string, string> = {
@@ -25,6 +27,7 @@ const LAYER_GLOW: Record<string, string> = {
   tools: "from-emerald-500/20 to-transparent",
   context: "from-purple-500/20 to-transparent",
   ecosystem: "from-red-500/20 to-transparent",
+  hidden: "from-yellow-500/20 to-transparent",
 };
 
 /* ─── 统计数据 ─── */
@@ -135,6 +138,11 @@ const LAYER_DETAILS: Record<string, { desc: string; keyFiles: string[]; keyPatte
     desc: "通过 MCP 协议接入外部服务，热加载插件扩展能力边界，Agent/Team/Swarm 多层协作模式，SSE/WS/Hybrid 传输层。",
     keyFiles: ["mcp/client.ts", "pluginLoader.ts", "AgentTool.tsx", "transports/"],
     keyPatterns: ["MCP Client/Server", "Plugin Marketplace", "Multi-Agent Orchestration", "Transport Abstraction"],
+  },
+  hidden: {
+    desc: "通过 feature() 编译时门控的 30+ 隐藏功能：Buddy 电子宠物、Kairos 助手模式、Ultraplan 深度规划、Undercover 卧底模式、Daemon 守护进程、UDS 跨会话通信等。",
+    keyFiles: ["buddy/", "commands/ultraplan.tsx", "utils/undercover.ts", "entrypoints/cli.tsx", "utils/cronScheduler.ts"],
+    keyPatterns: ["Feature Flags", "Compile-time DCE", "GrowthBook Gates", "Buddy / Kairos / Ultraplan"],
   },
 };
 
@@ -462,7 +470,7 @@ export default function HomePage() {
         >
           <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-zinc-800 bg-zinc-900/80 px-4 py-1.5 text-xs text-zinc-400">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            基于 Claude Code 源码 · 12 章交互式教学
+            基于 Claude Code 源码 · 13 章交互式教学
           </div>
           <h1 className="text-4xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
             <span className="bg-gradient-to-r from-white via-zinc-300 to-zinc-500 bg-clip-text text-transparent">
@@ -476,7 +484,7 @@ export default function HomePage() {
           <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-zinc-400 sm:text-lg">
             生产级的 Claude Code 有 960+ 个文件，50+ 集成工具，380K+ 行代码
             <br />
-            这 12 章带你从核心循环到工程全貌，逐层拆解。
+            这 13 章带你从核心循环到工程全貌，逐层拆解。
           </p>
         </motion.div>
 
@@ -634,6 +642,65 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── Section: 隐藏功能 ── */}
+      <section className="mb-20">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="mb-2 text-sm font-medium text-yellow-400">HIDDEN FEATURES</div>
+          <h2 className="mb-2 text-2xl font-bold sm:text-3xl">源码中的 8 大隐藏功能</h2>
+          <p className="mb-8 max-w-2xl text-sm text-zinc-500">
+            通过 <code className="rounded bg-zinc-800 px-1.5 py-0.5 text-yellow-400/80 font-mono text-xs">feature(&apos;FLAG&apos;)</code> 编译时门控，
+            外部构建中被 DCE 移除，但源码还原中完整保留。
+          </p>
+        </motion.div>
+
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {[
+            { name: "Buddy 电子宠物", flag: "BUDDY", desc: "18 种物种 · ASCII 精灵图 · 愚人节彩蛋", color: "#F59E0B", icon: "🐾" },
+            { name: "Kairos 助手模式", flag: "KAIROS", desc: "跨会话持久化 · 主动循环 · Cron 调度", color: "#8B5CF6", icon: "🧠" },
+            { name: "Ultraplan 深度规划", flag: "ULTRAPLAN", desc: "Opus 模型 · 30min 远程规划 · CCR", color: "#3B82F6", icon: "📋" },
+            { name: "Undercover 卧底", flag: "ant-only", desc: "开源贡献安全 · 防泄露内部代号", color: "#EF4444", icon: "🕵️" },
+            { name: "Daemon 守护进程", flag: "DAEMON", desc: "Supervisor/Worker · 无头桥接", color: "#10B981", icon: "⚙️" },
+            { name: "UDS 跨会话通信", flag: "UDS_INBOX", desc: "Unix Domain Socket · /peers", color: "#06B6D4", icon: "📡" },
+            { name: "Voice 语音模式", flag: "VOICE_MODE", desc: "Anthropic voice_stream STT", color: "#F97316", icon: "🎙️" },
+            { name: "后台会话", flag: "BG_SESSIONS", desc: "claude --bg · ps/attach/kill", color: "#A855F7", icon: "📺" },
+          ].map((item, i) => (
+            <motion.div
+              key={item.name}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.3, delay: i * 0.05 }}
+            >
+              <Link
+                href="/chapter/ch13"
+                className="group block rounded-xl border border-yellow-500/10 bg-zinc-900/50 p-3 no-underline transition-all hover:border-yellow-500/30 hover:bg-zinc-800/50"
+              >
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-sm">{item.icon}</span>
+                  <span className="text-xs font-semibold text-zinc-200 group-hover:text-yellow-400 transition-colors">{item.name}</span>
+                </div>
+                <div className="mb-1 font-mono text-[10px] text-yellow-500/60">{item.flag}</div>
+                <div className="text-[10px] text-zinc-500 leading-relaxed">{item.desc}</div>
+              </Link>
+            </motion.div>
+          ))}
+        </div>
+
+        <div className="mt-4 text-center">
+          <Link
+            href="/chapter/ch13"
+            className="inline-flex items-center gap-2 rounded-lg bg-yellow-500/10 px-4 py-2 text-sm font-medium text-yellow-400 no-underline transition hover:bg-yellow-500/20"
+          >
+            深入 Ch13: 隐藏功能完整解析 →
+          </Link>
+        </div>
+      </section>
+
       {/* ── Section: 核心源码文件速查 ── */}
       <section className="mb-20">
         <motion.div
@@ -703,7 +770,7 @@ export default function HomePage() {
           transition={{ duration: 0.5 }}
         >
           <div className="mb-2 text-sm font-medium text-amber-400">LEARNING PATH</div>
-          <h2 className="mb-2 text-2xl font-bold sm:text-3xl">12 章源码深潜</h2>
+          <h2 className="mb-2 text-2xl font-bold sm:text-3xl">13 章源码深潜</h2>
           <p className="mb-6 max-w-2xl text-sm text-zinc-500">
             每章聚焦一个核心子系统，包含源码解析 + 架构可视化 + 可运行的最小复现。
             按架构层过滤，或按顺序学习。

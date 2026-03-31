@@ -25,6 +25,7 @@ const CHAPTER_FILES = {
   ch10: 'ch10-cli-transport.md',
   ch11: 'ch11-bootstrap.md',
   ch12: 'ch12-production-patterns.md',
+  ch13: 'ch13-hidden-features.md',
 };
 
 const docs = [];

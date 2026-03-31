@@ -21,6 +21,7 @@ const visualizations: Record<string, React.ComponentType> = {
   ch10: dynamic(() => import("./ch11-transport"), { ssr: false }),
   ch11: dynamic(() => import("./ch01-bootstrap"), { ssr: false }),
   ch12: dynamic(() => import("./ch12-production"), { ssr: false }),
+  ch13: dynamic(() => import("./ch13-hidden-features"), { ssr: false }),
 };
 
 interface ChapterVisualizationProps {

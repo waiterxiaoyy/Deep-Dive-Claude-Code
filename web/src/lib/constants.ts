@@ -1,6 +1,6 @@
 export const CHAPTER_ORDER = [
   "ch01","ch02","ch03","ch04","ch05","ch06",
-  "ch07","ch08","ch09","ch10","ch11","ch12",
+  "ch07","ch08","ch09","ch10","ch11","ch12","ch13",
 ] as const;
 
 export type ChapterId = typeof CHAPTER_ORDER[number];
@@ -9,7 +9,7 @@ export const CHAPTER_META: Record<string, {
   title: string;
   subtitle: string;
   motto: string;
-  layer: "engine" | "tools" | "context" | "ecosystem";
+  layer: "engine" | "tools" | "context" | "ecosystem" | "hidden";
   sourceFiles: string[];
   sourceSize: string;
   demoFile: string;
@@ -76,6 +76,11 @@ export const CHAPTER_META: Record<string, {
     layer: "engine", sourceFiles: ["sessionStorage.ts","gracefulShutdown.ts","analytics/","api/errors.ts"], sourceSize: "300KB+",
     demoFile: "s12_production.ts", needsApiKey: false, prev: "ch11",
   },
+  ch13: {
+    title: "隐藏功能", subtitle: "Feature Flag 门控的隐藏模块", motto: "每一行 feature('FLAG') 背后，都是一个尚未公开的产品决策",
+    layer: "hidden", sourceFiles: ["buddy/","commands/ultraplan.tsx","utils/undercover.ts","entrypoints/cli.tsx"], sourceSize: "500KB+",
+    demoFile: "s13_hidden_features.ts", needsApiKey: false, prev: "ch12",
+  },
 };
 
 export const LAYERS = [
@@ -83,6 +88,7 @@ export const LAYERS = [
   { id: "tools" as const, label: "工具与安全", color: "#10B981", chapters: ["ch04","ch05"] },
   { id: "context" as const, label: "上下文管理", color: "#8B5CF6", chapters: ["ch06"] },
   { id: "ecosystem" as const, label: "协议与协作", color: "#EF4444", chapters: ["ch07","ch08","ch09","ch10"] },
+  { id: "hidden" as const, label: "隐藏功能", color: "#F59E0B", chapters: ["ch13"] },
 ] as const;
 
 export const LAYER_COLORS: Record<string, string> = {
@@ -90,4 +96,5 @@ export const LAYER_COLORS: Record<string, string> = {
   tools: "#10B981",
   context: "#8B5CF6",
   ecosystem: "#EF4444",
+  hidden: "#F59E0B",
 };

@@ -13,6 +13,7 @@ const ARCH_LAYERS = [
   { name: "多 Agent", color: "#EF4444", files: "AgentTool + swarm/ + teammate*", size: "300KB+", y: 7 },
   { name: "传输层", color: "#EF4444", files: "transports/ + structuredIO", size: "100KB+", y: 8 },
   { name: "生产工程", color: "#F59E0B", files: "sessionStorage + analytics + errors", size: "300KB+", y: 9 },
+  { name: "隐藏功能 (Feature Flags)", color: "#F59E0B", files: "buddy/ + ultraplan + undercover + daemon + kairos", size: "500KB+", y: 10 },
 ];
 
 export default function ArchitecturePage() {

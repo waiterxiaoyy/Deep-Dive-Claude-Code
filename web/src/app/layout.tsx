@@ -4,7 +4,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Deep Dive Claude Code",
-  description: "从源码理解生产级 AI 编程助手 — 12 章由浅入深",
+  description: "从源码理解生产级 AI 编程助手 — 13 章由浅入深",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

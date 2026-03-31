@@ -21,6 +21,7 @@ const scenarioModules: Record<string, () => Promise<{ default: Scenario }>> = {
   ch10: () => import("@/data/scenarios/ch11.json") as Promise<{ default: Scenario }>,
   ch11: () => import("@/data/scenarios/ch01.json") as Promise<{ default: Scenario }>,
   ch12: () => import("@/data/scenarios/ch12.json") as Promise<{ default: Scenario }>,
+  ch13: () => import("@/data/scenarios/ch13.json") as Promise<{ default: Scenario }>,
 };
 
 interface AgentLoopSimulatorProps {

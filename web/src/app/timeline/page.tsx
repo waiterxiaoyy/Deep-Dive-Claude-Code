@@ -13,7 +13,7 @@ export default function TimelinePage() {
       </nav>
 
       <h1 className="mb-2 text-3xl font-bold">学习路径</h1>
-      <p className="mb-8 text-zinc-400">12 章由浅入深，从启动流程到生产级工程</p>
+      <p className="mb-8 text-zinc-400">13 章由浅入深，从启动流程到生产级工程</p>
 
       {/* 层次图例 */}
       <div className="mb-8 flex flex-wrap gap-4">
