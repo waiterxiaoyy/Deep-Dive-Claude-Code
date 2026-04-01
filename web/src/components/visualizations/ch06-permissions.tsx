@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useSteppedVisualization } from "@/hooks/useSteppedVisualization";
 import { StepControls } from "@/components/visualizations/shared/step-controls";
-import { getLocalizedText, type LocalizedText } from "@/lib/i18n";
+import { getLocalizedText } from "@/lib/i18n";
 import { useLocale } from "@/lib/locale-context";
 
 interface PermRule {
@@ -35,11 +35,11 @@ const CHECKS_PER_STEP: (CheckResult | null)[] = [
 ];
 
 const ENV_VARS = [
-  { name: "ANTHROPIC_API_KEY", status: "cleaned", desc: "API 密钥 → 已清除" },
-  { name: "DATABASE_URL", status: "cleaned", desc: "数据库连接 → 已清除" },
-  { name: "PATH", status: "kept", desc: "系统路径 → 保留" },
-  { name: "HOME", status: "kept", desc: "主目录 → 保留" },
-  { name: "AWS_SECRET_KEY", status: "cleaned", desc: "AWS 密钥 → 已清除" },
+  { name: "ANTHROPIC_API_KEY", status: "cleaned", desc: { zh: "API 密钥 → 已清除", en: "API key → Cleaned" } },
+  { name: "DATABASE_URL", status: "cleaned", desc: { zh: "数据库连接 → 已清除", en: "DB connection → Cleaned" } },
+  { name: "PATH", status: "kept", desc: { zh: "系统路径 → 保留", en: "System path → Kept" } },
+  { name: "HOME", status: "kept", desc: { zh: "主目录 → 保留", en: "Home dir → Kept" } },
+  { name: "AWS_SECRET_KEY", status: "cleaned", desc: { zh: "AWS 密钥 → 已清除", en: "AWS key → Cleaned" } },
 ];
 
 const STEP_INFO = [
@@ -115,7 +115,7 @@ export default function PermissionsVisualization() {
                     className={`flex items-center justify-between rounded border p-2 ${v.status === "cleaned" ? "border-red-800 bg-red-950/20" : "border-zinc-800 bg-zinc-950"}`}
                   >
                     <span className="font-mono text-[11px] text-zinc-300">{v.name}</span>
-                    <span className={`text-[10px] ${v.status === "cleaned" ? "text-red-400" : "text-emerald-400"}`}>{v.desc}</span>
+                    <span className={`text-[10px] ${v.status === "cleaned" ? "text-red-400" : "text-emerald-400"}`}>{getLocalizedText(v.desc, locale)}</span>
                   </motion.div>
                 ))}
               </motion.div>
