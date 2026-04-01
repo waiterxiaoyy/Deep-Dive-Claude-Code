@@ -3,8 +3,9 @@
 import { motion } from "framer-motion";
 import { useSteppedVisualization } from "@/hooks/useSteppedVisualization";
 import { StepControls } from "@/components/visualizations/shared/step-controls";
-import { getLocalizedText, type LocalizedText } from "@/lib/i18n";
+import { getLocalizedText } from "@/lib/i18n";
 import { useLocale } from "@/lib/locale-context";
+import type { LocalizedText } from "@/types/agent-data";
 
 const TRANSPORT_LAYERS = [
   { id: "stdio", label: "stdio", desc: { zh: "标准输入/输出 — 本地终端默认", en: "Standard I/O — Local terminal default" }, color: "bg-blue-500", port: "stdin/stdout" },

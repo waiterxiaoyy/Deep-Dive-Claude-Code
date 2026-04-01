@@ -3,8 +3,9 @@
 import { useState, useMemo } from "react";
 import { useSteppedVisualization } from "@/hooks/useSteppedVisualization";
 import { StepControls } from "./shared/step-controls";
-import { getLocalizedText, type LocalizedText } from "@/lib/i18n";
+import { getLocalizedText } from "@/lib/i18n";
 import { useLocale } from "@/lib/locale-context";
+import type { LocalizedText } from "@/types/agent-data";
 
 /* ═══════════════════════════════════════════════════════════════
    Buddy 电子宠物 — 生成流程 + 宠物卡片

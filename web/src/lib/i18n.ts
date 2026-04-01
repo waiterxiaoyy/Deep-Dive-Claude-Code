@@ -266,8 +266,6 @@ export const UI_TEXT: Record<Locale, {
     sim_title: "Agent Loop Simulator",
     sim_no_scenario: "No simulation scenario available for this chapter",
     sim_start_hint: "Click Play or Step to start simulation",
-    chapter_runnable: "Directly runnable",
-    chapter_code_wip: "Source code example for this chapter is under development...",
   },
 };
 

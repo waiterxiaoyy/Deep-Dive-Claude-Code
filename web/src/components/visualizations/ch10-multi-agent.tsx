@@ -3,8 +3,9 @@
 import { motion } from "framer-motion";
 import { useSteppedVisualization } from "@/hooks/useSteppedVisualization";
 import { StepControls } from "@/components/visualizations/shared/step-controls";
-import { getLocalizedText, type LocalizedText } from "@/lib/i18n";
+import { getLocalizedText } from "@/lib/i18n";
 import { useLocale } from "@/lib/locale-context";
+import type { LocalizedText } from "@/types/agent-data";
 
 interface AgentNode { id: string; label: string; type: "main" | "sub" | "teammate"; status: "idle" | "active" | "done"; x: number; y: number; }
 
