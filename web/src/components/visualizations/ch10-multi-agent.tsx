@@ -3,6 +3,8 @@
 import { motion } from "framer-motion";
 import { useSteppedVisualization } from "@/hooks/useSteppedVisualization";
 import { StepControls } from "@/components/visualizations/shared/step-controls";
+import { getLocalizedText, type LocalizedText } from "@/lib/i18n";
+import { useLocale } from "@/lib/locale-context";
 
 interface AgentNode { id: string; label: string; type: "main" | "sub" | "teammate"; status: "idle" | "active" | "done"; x: number; y: number; }
 
@@ -43,28 +45,29 @@ const TYPE_COLORS = {
 
 const STATUS_GLOW = { idle: "none", active: "url(#glow-ma)", done: "url(#glow-done)" };
 
-const DETAIL_PER_STEP = [
-  "三层 Agent 模型:\n  L1: Subagent — 隔离上下文的子任务\n  L2: Teammate — 持久化的队友协作\n  L3: Swarm — 集群并行执行",
-  "Main Agent 收到复杂任务:\n  \"重构整个认证模块\"",
-  "Subagent 模式:\n  const sub = spawnAgent({\n    messages: [],  // 独立 messages[]\n    tools: parentTools,\n    task: '分析 auth.ts 依赖图',\n  });\n  // 隔离上下文，不污染主对话",
-  "Subagent 完成:\n  result = '发现 5 个依赖文件'\n  → 摘要注入 Main Agent\n  → Subagent 上下文释放",
-  "Teammate 模式:\n  spawnTeammate('A', {\n    task: '重写 auth.ts',\n    mailbox: '/tmp/mailbox-A',\n  });\n  spawnTeammate('B', {\n    task: '更新测试文件',\n    mailbox: '/tmp/mailbox-B',\n  });",
-  "邮箱通信:\n  A → mailbox → Main: '重写完成'\n  B → mailbox → Main: '测试更新完成'\n\n  Main 读取邮箱，协调进度",
-  "Swarm 集群:\n  coordinator.dispatch([\n    { worker: 1, task: '模块 A' },\n    { worker: 2, task: '模块 B' },\n    { worker: 3, task: '模块 C' },\n  ]);\n  // 并行执行，共享任务板",
+const DETAIL_PER_STEP: LocalizedText[] = [
+  { zh: "三层 Agent 模型:\n  L1: Subagent — 隔离上下文的子任务\n  L2: Teammate — 持久化的队友协作\n  L3: Swarm — 集群并行执行", en: "Three-layer Agent model:\n  L1: Subagent — Isolated context sub-tasks\n  L2: Teammate — Persistent teammate collaboration\n  L3: Swarm — Cluster parallel execution" },
+  { zh: "Main Agent 收到复杂任务:\n  \"重构整个认证模块\"", en: "Main Agent receives complex task:\n  \"Refactor entire auth module\"" },
+  { zh: "Subagent 模式:\n  const sub = spawnAgent({\n    messages: [],  // 独立 messages[]\n    tools: parentTools,\n    task: '分析 auth.ts 依赖图',\n  });\n  // 隔离上下文，不污染主对话", en: "Subagent mode:\n  const sub = spawnAgent({\n    messages: [],  // Independent messages[]\n    tools: parentTools,\n    task: 'Analyze auth.ts dependency graph',\n  });\n  // Isolated context, no main conversation pollution" },
+  { zh: "Subagent 完成:\n  result = '发现 5 个依赖文件'\n  → 摘要注入 Main Agent\n  → Subagent 上下文释放", en: "Subagent completes:\n  result = 'Found 5 dependency files'\n  → Summary injected to Main Agent\n  → Subagent context released" },
+  { zh: "Teammate 模式:\n  spawnTeammate('A', {\n    task: '重写 auth.ts',\n    mailbox: '/tmp/mailbox-A',\n  });\n  spawnTeammate('B', {\n    task: '更新测试文件',\n    mailbox: '/tmp/mailbox-B',\n  });", en: "Teammate mode:\n  spawnTeammate('A', {\n    task: 'Rewrite auth.ts',\n    mailbox: '/tmp/mailbox-A',\n  });\n  spawnTeammate('B', {\n    task: 'Update test files',\n    mailbox: '/tmp/mailbox-B',\n  });" },
+  { zh: "邮箱通信:\n  A → mailbox → Main: '重写完成'\n  B → mailbox → Main: '测试更新完成'\n\n  Main 读取邮箱，协调进度", en: "Mailbox communication:\n  A → mailbox → Main: 'Rewrite complete'\n  B → mailbox → Main: 'Test update complete'\n\n  Main reads mailbox, coordinates progress" },
+  { zh: "Swarm 集群:\n  coordinator.dispatch([\n    { worker: 1, task: '模块 A' },\n    { worker: 2, task: '模块 B' },\n    { worker: 3, task: '模块 C' },\n  ]);\n  // 并行执行，共享任务板", en: "Swarm cluster:\n  coordinator.dispatch([\n    { worker: 1, task: 'Module A' },\n    { worker: 2, task: 'Module B' },\n    { worker: 3, task: 'Module C' },\n  ]);\n  // Parallel execution, shared task board" },
 ];
 
-const STEP_INFO = [
-  { title: "多 Agent 协作", desc: "三层模型：Subagent / Teammate / Swarm，从简单到复杂" },
-  { title: "任务触发", desc: "Main Agent 收到超出单 Agent 能力的复杂任务" },
-  { title: "L1: Subagent 模式", desc: "隔离 messages[]，子任务独立执行，不污染主上下文" },
-  { title: "Subagent 返回", desc: "子任务完成，摘要注入主对话，上下文释放" },
-  { title: "L2: Teammate 模式", desc: "持久化队友，各自独立运行，通过文件邮箱异步通信" },
-  { title: "邮箱通信", desc: "Teammate 通过文件系统邮箱交换消息和协调进度" },
-  { title: "L3: Swarm 集群", desc: "Coordinator 分发任务，Workers 并行执行，共享任务板" },
+const STEP_INFO: { title: LocalizedText; desc: LocalizedText }[] = [
+  { title: { zh: "多 Agent 协作", en: "Multi-Agent Collaboration" }, desc: { zh: "三层模型：Subagent / Teammate / Swarm，从简单到复杂", en: "Three-layer model: Subagent / Teammate / Swarm, from simple to complex" } },
+  { title: { zh: "任务触发", en: "Task Triggered" }, desc: { zh: "Main Agent 收到超出单 Agent 能力的复杂任务", en: "Main Agent receives complex task beyond single agent capability" } },
+  { title: { zh: "L1: Subagent 模式", en: "L1: Subagent Mode" }, desc: { zh: "隔离 messages[]，子任务独立执行，不污染主上下文", en: "Isolated messages[], subtasks execute independently, no pollution to main context" } },
+  { title: { zh: "Subagent 返回", en: "Subagent Returns" }, desc: { zh: "子任务完成，摘要注入主对话，上下文释放", en: "Subtask completed, summary injected to main conversation, context released" } },
+  { title: { zh: "L2: Teammate 模式", en: "L2: Teammate Mode" }, desc: { zh: "持久化队友，各自独立运行，通过文件邮箱异步通信", en: "Persistent teammates, run independently, communicate asynchronously via file mailbox" } },
+  { title: { zh: "邮箱通信", en: "Mailbox Communication" }, desc: { zh: "Teammate 通过文件系统邮箱交换消息和协调进度", en: "Teammates exchange messages and coordinate progress via filesystem mailbox" } },
+  { title: { zh: "L3: Swarm 集群", en: "L3: Swarm Cluster" }, desc: { zh: "Coordinator 分发任务，Workers 并行执行，共享任务板", en: "Coordinator dispatches tasks, Workers execute in parallel, shared task board" } },
 ];
 
 export default function MultiAgentVisualization() {
   const viz = useSteppedVisualization({ totalSteps: 7, autoPlayInterval: 3000 });
+  const { locale } = useLocale();
   const nodes = NODES_PER_STEP[viz.currentStep];
 
   return (
@@ -73,7 +76,9 @@ export default function MultiAgentVisualization() {
       <div className="rounded-lg border border-zinc-700 bg-zinc-900 p-4">
         <div className="flex flex-col gap-4 lg:flex-row">
           <div className="w-full lg:w-[45%]">
-            <div className="mb-2 font-mono text-xs text-zinc-500">Agent 拓扑</div>
+            <div className="mb-2 font-mono text-xs text-zinc-500">
+              {locale === "zh" ? "Agent 拓扑" : "Agent Topology"}
+            </div>
             <svg viewBox="0 0 500 300" className="w-full rounded-md border border-zinc-800 bg-zinc-950" style={{minHeight:240}}>
               <defs>
                 <filter id="glow-ma"><feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#3b82f6" floodOpacity="0.6"/></filter>
@@ -116,11 +121,13 @@ export default function MultiAgentVisualization() {
           </div>
 
           <div className="w-full lg:w-[55%]">
-            <div className="mb-2 font-mono text-xs text-zinc-500">执行细节</div>
+            <div className="mb-2 font-mono text-xs text-zinc-500">
+              {locale === "zh" ? "执行细节" : "Execution Details"}
+            </div>
             <div className="min-h-[240px] rounded-md border border-zinc-800 bg-zinc-950 p-3">
               <motion.pre key={viz.currentStep} initial={{opacity:0}} animate={{opacity:1}}
                 className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-zinc-300">
-                {DETAIL_PER_STEP[viz.currentStep]}
+                {getLocalizedText(DETAIL_PER_STEP[viz.currentStep], locale)}
               </motion.pre>
             </div>
           </div>
@@ -129,8 +136,8 @@ export default function MultiAgentVisualization() {
       <StepControls currentStep={viz.currentStep} totalSteps={viz.totalSteps}
         onPrev={viz.prev} onNext={viz.next} onReset={viz.reset}
         isPlaying={viz.isPlaying} onToggleAutoPlay={viz.toggleAutoPlay}
-        stepTitle={STEP_INFO[viz.currentStep].title}
-        stepDescription={STEP_INFO[viz.currentStep].desc} />
+        stepTitle={getLocalizedText(STEP_INFO[viz.currentStep].title, locale)}
+        stepDescription={getLocalizedText(STEP_INFO[viz.currentStep].desc, locale)} />
     </section>
   );
 }

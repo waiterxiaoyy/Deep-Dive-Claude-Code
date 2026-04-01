@@ -7,7 +7,7 @@
  * 3. 权限拦截层（canUseTool 包装）
  * 4. 消息类型系统（8 种联合类型）
  *
- * 对应源码:
+ * Source: 
  *   src/QueryEngine.ts:184-300  → 类定义 + submitMessage
  *   src/query.ts                → 核心循环
  *   src/types/message.ts        → 消息类型

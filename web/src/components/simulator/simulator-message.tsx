@@ -3,6 +3,8 @@
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import type { SimStep } from "@/types/agent-data";
+import { getLocalizedText } from "@/lib/i18n";
+import { useLocale } from "@/lib/locale-context";
 import { User, Bot, Terminal, ArrowRight, AlertCircle } from "lucide-react";
 
 interface SimulatorMessageProps {
@@ -47,6 +49,7 @@ const TYPE_CONFIG: Record<
 };
 
 export function SimulatorMessage({ step }: SimulatorMessageProps) {
+  const { locale } = useLocale();
   const config = TYPE_CONFIG[step.type] || TYPE_CONFIG.assistant_text;
   const Icon = config.icon;
 
@@ -75,18 +78,18 @@ export function SimulatorMessage({ step }: SimulatorMessageProps) {
 
       {step.type === "tool_call" || step.type === "tool_result" ? (
         <pre className="overflow-x-auto whitespace-pre-wrap rounded bg-zinc-950 p-2.5 font-mono text-xs leading-relaxed text-zinc-100">
-          {step.content || "(empty)"}
+          {getLocalizedText(step.content, locale) || "(empty)"}
         </pre>
       ) : step.type === "system_event" ? (
         <pre className="overflow-x-auto whitespace-pre-wrap rounded bg-purple-950 p-2.5 font-mono text-xs leading-relaxed text-purple-100">
-          {step.content}
+          {getLocalizedText(step.content, locale)}
         </pre>
       ) : (
-        <p className="text-sm leading-relaxed text-zinc-200">{step.content}</p>
+        <p className="text-sm leading-relaxed text-zinc-200">{getLocalizedText(step.content, locale)}</p>
       )}
 
       <p className="mt-2 text-xs italic text-zinc-500">
-        {step.annotation}
+        {getLocalizedText(step.annotation, locale)}
       </p>
     </motion.div>
   );

@@ -1,1 +1,95 @@
-{"version":"ch06","title":"文件与权限","description":"Permission Engine 的规则匹配、路径沙箱验证和环境变量清洗","steps":[{"type":"system_event","content":"加载权限规则:\n  src/** → allow (FileRead/Edit)\n  node_modules/** → deny (FileEdit)\n  .env* → deny (FileRead)\n  ~/** → ask (FileRead)","annotation":"权限规则用 glob 模式定义"},{"type":"tool_call","content":"FileRead → src/auth.ts","toolName":"FileRead","annotation":"模型请求读取源码文件"},{"type":"system_event","content":"权限检查:\n  path: src/auth.ts\n  tool: FileRead\n  匹配规则: src/** → allow\n  结果: ✓ 允许","annotation":"路径在 src/ 下，匹配 allow 规则"},{"type":"tool_call","content":"FileEdit → node_modules/lodash/index.js","toolName":"FileEdit","annotation":"模型尝试修改 node_modules"},{"type":"system_event","content":"权限检查:\n  path: node_modules/lodash/index.js\n  tool: FileEdit\n  匹配规则: node_modules/** → deny\n  结果: ✗ 拒绝!","annotation":"node_modules 禁止编辑"},{"type":"tool_call","content":"FileRead → .env.local","toolName":"FileRead","annotation":"模型尝试读取环境变量文件"},{"type":"system_event","content":"权限检查:\n  path: .env.local\n  tool: FileRead\n  匹配规则: .env* → deny\n  结果: ✗ 拒绝! (防止密钥泄露)","annotation":"环境变量文件包含敏感信息，禁止读取"},{"type":"system_event","content":"子进程环境清洗:\n  ANTHROPIC_API_KEY → 已删除\n  DATABASE_URL → 已删除\n  AWS_SECRET_KEY → 已删除\n  PATH → 保留\n  HOME → 保留","annotation":"启动子进程前清除敏感环境变量"}]}
+{
+  "version": "ch06",
+  "title": {
+    "zh": "上下文管理",
+    "en": "Context Management"
+  },
+  "description": {
+    "zh": "Permission Engine 的规则匹配、路径沙箱验证和环境变量清洗",
+    "en": "Permission Engine's rule matching, path sandbox validation, and environment variable sanitization"
+  },
+  "steps": [
+    {
+      "type": "system_event",
+      "content": {
+        "zh": "加载权限规则:\n  src/** → allow (FileRead/Edit)\n  node_modules/** → deny (FileEdit)\n  .env* → deny (FileRead)\n  ~/** → ask (FileRead)",
+        "en": "Load permission rules:\n  src/** → allow (FileRead/Edit)\n  node_modules/** → deny (FileEdit)\n  .env* → deny (FileRead)\n  ~/** → ask (FileRead)"
+      },
+      "annotation": {
+        "zh": "权限规则用 glob 模式定义",
+        "en": "Permission rules defined using glob patterns"
+      }
+    },
+    {
+      "type": "tool_call",
+      "content": "FileRead → src/auth.ts",
+      "toolName": "FileRead",
+      "annotation": {
+        "zh": "模型请求读取源码文件",
+        "en": "Model requests to read source file"
+      }
+    },
+    {
+      "type": "system_event",
+      "content": {
+        "zh": "权限检查:\n  path: src/auth.ts\n  tool: FileRead\n  匹配规则: src/** → allow\n  结果: ✓ 允许",
+        "en": "Permission check:\n  path: src/auth.ts\n  tool: FileRead\n  Matched rule: src/** → allow\n  Result: ✓ Allow"
+      },
+      "annotation": {
+        "zh": "路径在 src/ 下，匹配 allow 规则",
+        "en": "Path under src/, matches allow rule"
+      }
+    },
+    {
+      "type": "tool_call",
+      "content": "FileEdit → node_modules/lodash/index.js",
+      "toolName": "FileEdit",
+      "annotation": {
+        "zh": "模型尝试修改 node_modules",
+        "en": "Model attempts to modify node_modules"
+      }
+    },
+    {
+      "type": "system_event",
+      "content": {
+        "zh": "权限检查:\n  path: node_modules/lodash/index.js\n  tool: FileEdit\n  匹配规则: node_modules/** → deny\n  结果: ✗ 拒绝!",
+        "en": "Permission check:\n  path: node_modules/lodash/index.js\n  tool: FileEdit\n  Matched rule: node_modules/** → deny\n  Result: ✗ Deny!"
+      },
+      "annotation": {
+        "zh": "node_modules 禁止编辑",
+        "en": "node_modules editing forbidden"
+      }
+    },
+    {
+      "type": "tool_call",
+      "content": "FileRead → .env.local",
+      "toolName": "FileRead",
+      "annotation": {
+        "zh": "模型尝试读取环境变量文件",
+        "en": "Model attempts to read environment file"
+      }
+    },
+    {
+      "type": "system_event",
+      "content": {
+        "zh": "权限检查:\n  path: .env.local\n  tool: FileRead\n  匹配规则: .env* → deny\n  结果: ✗ 拒绝! (防止密钥泄露)",
+        "en": "Permission check:\n  path: .env.local\n  tool: FileRead\n  Matched rule: .env* → deny\n  Result: ✗ Deny! (Prevent key leakage)"
+      },
+      "annotation": {
+        "zh": "环境变量文件包含敏感信息，禁止读取",
+        "en": "Environment files contain sensitive info, reading forbidden"
+      }
+    },
+    {
+      "type": "system_event",
+      "content": {
+        "zh": "子进程环境清洗:\n  ANTHROPIC_API_KEY → 已删除\n  DATABASE_URL → 已删除\n  AWS_SECRET_KEY → 已删除\n  PATH → 保留\n  HOME → 保留",
+        "en": "Subprocess environment sanitization:\n  ANTHROPIC_API_KEY → Removed\n  DATABASE_URL → Removed\n  AWS_SECRET_KEY → Removed\n  PATH → Kept\n  HOME → Kept"
+      },
+      "annotation": {
+        "zh": "启动子进程前清除敏感环境变量",
+        "en": "Clear sensitive env vars before starting subprocess"
+      }
+    }
+  ]
+}

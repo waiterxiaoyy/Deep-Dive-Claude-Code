@@ -6,7 +6,7 @@
  * 2. 路径沙箱 (工作区边界检查)
  * 3. 环境变量清洗 (子进程安全)
  *
- * 对应源码:
+ * Source: 
  *   src/utils/permissions/permissions.ts  (51KB)
  *   src/utils/permissions/filesystem.ts   (61KB)
  *   src/utils/fsOperations.ts             (24KB)

@@ -6,7 +6,7 @@
  * 2. 自动压缩: Token 超阈值时用模型总结 (需要 API)
  * 3. 记忆提取: 压缩前提取关键记忆, 压缩后重新注入
  *
- * 对应源码:
+ * Source: 
  *   src/services/compact/microCompact.ts    (19KB) — 微压缩
  *   src/services/compact/autoCompact.ts     (13KB) — 自动压缩触发
  *   src/services/compact/compact.ts         (59KB) — 压缩执行

@@ -1,53 +1,104 @@
 {
   "version": "ch01",
-  "title": "启动流程",
-  "description": "Claude Code 从按下回车到显示提示符的完整启动过程：快速路径分发 + 并行预取 + feature() 编译时消除",
+  "title": {
+    "zh": "启动流程",
+    "en": "Bootstrap"
+  },
+  "description": {
+    "zh": "Claude Code 从按下回车到显示提示符的完整启动过程：快速路径分发 + 并行预取 + feature() 编译时消除",
+    "en": "Complete Claude Code startup process from Enter to prompt: fast path dispatch + parallel prefetch + feature() compile-time elimination"
+  },
   "steps": [
     {
       "type": "user_message",
       "content": "$ claude --version",
-      "annotation": "用户执行 claude 命令，传入 --version 参数"
+      "annotation": {
+        "zh": "用户执行 claude 命令，传入 --version 参数",
+        "en": "User executes claude command with --version parameter"
+      }
     },
     {
       "type": "system_event",
-      "content": "dev-entry.ts: 扫描缺失导入... 0 个缺失\n→ 转发到 entrypoints/cli.tsx",
-      "annotation": "开发入口先检查依赖完整性，通过后进入 CLI 入口"
+      "content": {
+        "zh": "dev-entry.ts: 扫描缺失导入... 0 个缺失\n→ 转发到 entrypoints/cli.tsx",
+        "en": "dev-entry.ts: Scanning missing imports... 0 missing\n→ Forward to entrypoints/cli.tsx"
+      },
+      "annotation": {
+        "zh": "开发入口先检查依赖完整性,通过后进入 CLI 入口",
+        "en": "Dev entry first checks dependency integrity, then enters CLI entry"
+      }
     },
     {
       "type": "system_event",
-      "content": "cli.tsx 快速路径检测:\n  process.argv 包含 '--version'\n  → 匹配快速路径 #1\n  → 直接输出版本号，跳过完整加载",
-      "annotation": "快速路径优化：--version 零模块加载，毫秒级响应"
+      "content": {
+        "zh": "cli.tsx 快速路径检测:\n  process.argv 包含 '--version'\n  → 匹配快速路径 #1\n  → 直接输出版本号，跳过完整加载",
+        "en": "cli.tsx fast path detection:\n  process.argv contains '--version'\n  → Match fast path #1\n  → Direct version output, skip full load"
+      },
+      "annotation": {
+        "zh": "快速路径优化：--version 零模块加载，毫秒级响应",
+        "en": "Fast path optimization: --version zero module load, millisecond response"
+      }
     },
     {
       "type": "tool_result",
       "content": "1.0.33",
       "toolName": "stdout",
-      "annotation": "输出版本号后立即退出，不加载 main.tsx (785KB)"
+      "annotation": {
+        "zh": "输出版本号后立即退出，不加载 main.tsx (785KB)",
+        "en": "Output version and exit immediately, no main.tsx load (785KB)"
+      }
     },
     {
       "type": "user_message",
       "content": "$ claude",
-      "annotation": "用户执行完整启动（无快速路径参数）"
+      "annotation": {
+        "zh": "用户执行完整启动（无快速路径参数）",
+        "en": "User executes full startup (no fast path parameters)"
+      }
     },
     {
       "type": "system_event",
-      "content": "cli.tsx: 无快速路径匹配\n→ 动态 import('./main.tsx')\n→ 加载 785KB 核心模块",
-      "annotation": "完整启动路径：加载 Commander.js 参数解析 + 全部子系统"
+      "content": {
+        "zh": "cli.tsx: 无快速路径匹配\n→ 动态 import('./main.tsx')\n→ 加载 785KB 核心模块",
+        "en": "cli.tsx: No fast path match\n→ Dynamic import('./main.tsx')\n→ Load 785KB core modules"
+      },
+      "annotation": {
+        "zh": "完整启动路径：加载 Commander.js 参数解析 + 全部子系统",
+        "en": "Full startup path: load Commander.js argument parsing + all subsystems"
+      }
     },
     {
       "type": "system_event",
-      "content": "main.tsx 并行预取:\n  Promise.all([\n    fetchMDMConfig(),      // MDM 配置\n    getKeychainToken(),    // Keychain 凭证\n    loadGrowthBook(),      // A/B 测试\n    initAnalytics(),       // 遥测\n  ])",
-      "annotation": "关键优化：4 个异步操作并行执行，而非串行等待"
+      "content": {
+        "zh": "main.tsx 并行预取:\n  Promise.all([\n    fetchMDMConfig(),      // MDM 配置\n    getKeychainToken(),    // Keychain 凭证\n    loadGrowthBook(),      // A/B 测试\n    initAnalytics(),       // 遥测\n  ])",
+        "en": "main.tsx parallel prefetch:\n  Promise.all([\n    fetchMDMConfig(),      // MDM config\n    getKeychainToken(),    // Keychain credentials\n    loadGrowthBook(),      // A/B testing\n    initAnalytics(),       // Telemetry\n  ])"
+      },
+      "annotation": {
+        "zh": "关键优化：4 个异步操作并行执行，而非串行等待",
+        "en": "Key optimization: 4 async operations in parallel, not serial"
+      }
     },
     {
       "type": "system_event",
-      "content": "feature('internal_only') → 编译时已消除\nfeature('beta_tools')   → 保留并启用\n\n→ 初始化完成，启动 REPL",
-      "annotation": "feature() 宏在构建时决定功能开关，零运行时开销"
+      "content": {
+        "zh": "feature('internal_only') → 编译时已消除\nfeature('beta_tools')   → 保留并启用\n\n→ 初始化完成，启动 REPL",
+        "en": "feature('internal_only') → Compile-time eliminated\nfeature('beta_tools')   → Preserved and enabled\n\n→ Initialization complete, start REPL"
+      },
+      "annotation": {
+        "zh": "feature() 宏在构建时决定功能开关，零运行时开销",
+        "en": "feature() macro determines feature toggles at build time, zero runtime overhead"
+      }
     },
     {
       "type": "assistant_text",
-      "content": "> 欢迎使用 Claude Code! 输入你的需求开始...",
-      "annotation": "REPL 就绪，用户看到提示符，从按下回车到这里约 200ms"
+      "content": {
+        "zh": "> 欢迎使用 Claude Code! 输入你的需求开始...",
+        "en": "> Welcome to Claude Code! Enter your request to start..."
+      },
+      "annotation": {
+        "zh": "REPL 就绪，用户看到提示符，从按下回车到这里约 200ms",
+        "en": "REPL ready, user sees prompt, from Enter to here ~200ms"
+      }
     }
   ]
 }

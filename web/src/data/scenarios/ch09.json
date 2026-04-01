@@ -1,1 +1,97 @@
-{"version":"ch09","title":"插件生态","description":"插件发现、安全验证、能力注入的完整流程","steps":[{"type":"system_event","content":"pluginLoader.scan()\n扫描 ~/.claude/plugins/\n发现 2 个插件","annotation":"启动时扫描插件目录"},{"type":"system_event","content":"验证 eslint-fixer.dxt:\n  ✓ manifest.json 合法\n  ✓ 权限: [BashTool, FileRead]\n  ✓ 签名验证通过\n  → 加载成功","annotation":"DXT 格式插件通过安全验证"},{"type":"system_event","content":"验证 malicious-tool:\n  ✓ manifest.json 存在\n  ✗ 权限: NetworkAccess 不允许!\n  ✗ FileWrite(/etc) 超出沙箱!\n  → 拒绝加载","annotation":"恶意插件被安全检查拦截"},{"type":"system_event","content":"能力注入:\n  toolRegistry.register('eslint-fix')\n  工具总数: 50 → 51","annotation":"合法插件的工具注册到全局表"},{"type":"user_message","content":"帮我修复所有 ESLint 错误","annotation":"用户使用插件提供的能力"},{"type":"tool_call","content":"{ tool: 'eslint-fix', input: { path: 'src/' } }","toolName":"eslint-fix","annotation":"模型调用插件注册的工具"},{"type":"tool_result","content":"Fixed 12 ESLint errors in 5 files","toolName":"eslint-fix","annotation":"插件工具执行成功"},{"type":"assistant_text","content":"已修复 5 个文件中的 12 个 ESLint 错误","annotation":"插件无缝集成到 Agent 工作流"}]}
+{
+  "version": "ch09",
+  "title": {
+    "zh": "多Agent协作",
+    "en": "Multi-Agent Collaboration"
+  },
+  "description": {
+    "zh": "插件发现、安全验证、能力注入的完整流程",
+    "en": "Complete plugin discovery, security validation, and capability injection process"
+  },
+  "steps": [
+    {
+      "type": "system_event",
+      "content": {
+        "zh": "pluginLoader.scan()\n扫描 ~/.claude/plugins/\n发现 2 个插件",
+        "en": "pluginLoader.scan()\nScan ~/.claude/plugins/\nFound 2 plugins"
+      },
+      "annotation": {
+        "zh": "启动时扫描插件目录",
+        "en": "Scan plugin directory on startup"
+      }
+    },
+    {
+      "type": "system_event",
+      "content": {
+        "zh": "验证 eslint-fixer.dxt:\n  ✓ manifest.json 合法\n  ✓ 权限: [BashTool, FileRead]\n  ✓ 签名验证通过\n  → 加载成功",
+        "en": "Validate eslint-fixer.dxt:\n  ✓ manifest.json valid\n  ✓ Permissions: [BashTool, FileRead]\n  ✓ Signature verification passed\n  → Loaded successfully"
+      },
+      "annotation": {
+        "zh": "DXT 格式插件通过安全验证",
+        "en": "DXT format plugin passed security validation"
+      }
+    },
+    {
+      "type": "system_event",
+      "content": {
+        "zh": "验证 malicious-tool:\n  ✓ manifest.json 存在\n  ✗ 权限: NetworkAccess 不允许!\n  ✗ FileWrite(/etc) 超出沙箱!\n  → 拒绝加载",
+        "en": "Validate malicious-tool:\n  ✓ manifest.json exists\n  ✗ Permission: NetworkAccess denied!\n  ✗ FileWrite(/etc) outside sandbox!\n  → Rejected"
+      },
+      "annotation": {
+        "zh": "恶意插件被安全检查拦截",
+        "en": "Malicious plugin blocked by security check"
+      }
+    },
+    {
+      "type": "system_event",
+      "content": {
+        "zh": "能力注入:\n  toolRegistry.register('eslint-fix')\n  工具总数: 50 → 51",
+        "en": "Capability injection:\n  toolRegistry.register('eslint-fix')\n  Total tools: 50 → 51"
+      },
+      "annotation": {
+        "zh": "合法插件的工具注册到全局表",
+        "en": "Valid plugin's tools registered to global table"
+      }
+    },
+    {
+      "type": "user_message",
+      "content": {
+        "zh": "帮我修复所有 ESLint 错误",
+        "en": "Help me fix all ESLint errors"
+      },
+      "annotation": {
+        "zh": "用户使用插件提供的能力",
+        "en": "User uses capability provided by plugin"
+      }
+    },
+    {
+      "type": "tool_call",
+      "content": "{ tool: 'eslint-fix', input: { path: 'src/' } }",
+      "toolName": "eslint-fix",
+      "annotation": {
+        "zh": "模型调用插件注册的工具",
+        "en": "Model calls plugin-registered tool"
+      }
+    },
+    {
+      "type": "tool_result",
+      "content": "Fixed 12 ESLint errors in 5 files",
+      "toolName": "eslint-fix",
+      "annotation": {
+        "zh": "插件工具执行成功",
+        "en": "Plugin tool executed successfully"
+      }
+    },
+    {
+      "type": "assistant_text",
+      "content": {
+        "zh": "已修复 5 个文件中的 12 个 ESLint 错误",
+        "en": "Fixed 12 ESLint errors in 5 files"
+      },
+      "annotation": {
+        "zh": "插件无缝集成到 Agent 工作流",
+        "en": "Plugin seamlessly integrated into Agent workflow"
+      }
+    }
+  ]
+}

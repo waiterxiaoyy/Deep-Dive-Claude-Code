@@ -14,7 +14,7 @@ const DEMO_SOURCES: Record<string, { source: string; filename: string }> = {
   ch01: {
     filename: "agents/s01_query_engine.ts",
     source: `// Ch01: Agent 循环 — AsyncGenerator + 权限检查
-// 对应源码: src/QueryEngine.ts + src/query.ts
+// Source:  src/QueryEngine.ts + src/query.ts
 
 class QueryEngine {
   private messages: Message[] = [];
@@ -67,7 +67,7 @@ class QueryEngine {
   ch02: {
     filename: "agents/s02_tool_system.ts",
     source: `// Ch02: 工具架构 — Tool 基类 + 条件注册 + Schema 验证
-// 对应源码: src/Tool.ts (29KB) + src/tools.ts (17KB)
+// Source:  src/Tool.ts (29KB) + src/tools.ts (17KB)
 
 abstract class Tool<TInput, TOutput> {
   abstract name: string;
@@ -94,7 +94,7 @@ if (feature("internal_only")) {
   ch03: {
     filename: "agents/s03_prompt_pipeline.ts",
     source: `// Ch03: 提示词工程 — 4 层动态组装管线
-// 对应源码: src/constants/prompts.ts (53KB)
+// Source:  src/constants/prompts.ts (53KB)
 
 function buildSystemPrompt(context: Context): string {
   const layers = [
@@ -117,7 +117,7 @@ function loadClaudeMd(dir: string): string {
   ch04: {
     filename: "agents/s04_bash_security.ts",
     source: `// Ch04: Shell 安全体系 — 7 层命令分类
-// 对应源码: tools/BashTool/bashSecurity.ts (100KB)
+// Source:  tools/BashTool/bashSecurity.ts (100KB)
 
 type SecurityLevel = "safe" | "moderate" | "dangerous" | "blocked";
 
@@ -137,7 +137,7 @@ class BashSecurityEngine {
   ch05: {
     filename: "agents/s05_permissions.ts",
     source: `// Ch05: 权限引擎 — 规则匹配 + 路径沙箱
-// 对应源码: utils/permissions/permissions.ts (51KB)
+// Source:  utils/permissions/permissions.ts (51KB)
 
 class PermissionEngine {
   private rules: PermissionRule[];
@@ -160,7 +160,7 @@ function cleanEnv(env: NodeJS.ProcessEnv) {
   ch06: {
     filename: "agents/s06_context_compact.ts",
     source: `// Ch06: 上下文压缩 — 三层策略
-// 对应源码: services/compact/compact.ts (59KB)
+// Source:  services/compact/compact.ts (59KB)
 
 class ContextCompactor {
   // L1: 微压缩 — 截断大型工具结果
@@ -188,7 +188,7 @@ class ContextCompactor {
   ch07: {
     filename: "agents/s07_mcp_protocol.ts",
     source: `// Ch07: MCP 协议 — 工具自动发现 + 统一分发
-// 对应源码: services/mcp/client.ts (116KB)
+// Source:  services/mcp/client.ts (116KB)
 
 class MCPClient {
   private servers = new Map<string, MCPServer>();
@@ -210,7 +210,7 @@ class MCPClient {
   ch08: {
     filename: "agents/s08_plugin_loader.ts",
     source: `// Ch08: 插件加载 — 发现 + 验证 + 注入
-// 对应源码: utils/plugins/pluginLoader.ts (108KB)
+// Source:  utils/plugins/pluginLoader.ts (108KB)
 
 class PluginLoader {
   async loadAll() {
@@ -230,7 +230,7 @@ class PluginLoader {
   ch09: {
     filename: "agents/s09_multi_agent.ts",
     source: `// Ch09: 多 Agent — Subagent / Teammate / Swarm
-// 对应源码: tools/AgentTool/AgentTool.tsx (228KB)
+// Source:  tools/AgentTool/AgentTool.tsx (228KB)
 
 // L1: Subagent — 隔离上下文
 const result = await spawnAgent({
@@ -254,7 +254,7 @@ coordinator.dispatch([
   ch10: {
     filename: "agents/s10_transport.ts",
     source: `// Ch10: CLI 传输层 — 4 种协议
-// 对应源码: cli/transports/
+// Source:  cli/transports/
 
 // stdio: 本地终端默认
 const stdin = process.stdin.pipe(jsonRpcParser);
@@ -276,7 +276,7 @@ wss.on('connection', ws => {
   ch11: {
     filename: "agents/s11_bootstrap.ts",
     source: `// Ch11: 启动优化 — 快速路径 + feature() + 并行预取
-// 对应源码: src/dev-entry.ts → cli.tsx → main.tsx
+// Source:  src/dev-entry.ts → cli.tsx → main.tsx
 
 // 1. 快速路径分发 — 零模块加载
 function fastPathDispatch(argv: string[]) {
@@ -305,7 +305,7 @@ async function parallelPrefetch() {
   ch12: {
     filename: "agents/s12_production.ts",
     source: `// Ch12: 生产级模式
-// 对应源码: utils/gracefulShutdown.ts (20KB)
+// Source:  utils/gracefulShutdown.ts (20KB)
 
 // 指数退避重试
 async function retry<T>(fn: () => Promise<T>, max = 3): Promise<T> {

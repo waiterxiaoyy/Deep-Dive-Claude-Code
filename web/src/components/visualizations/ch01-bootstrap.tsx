@@ -3,11 +3,13 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useSteppedVisualization } from "@/hooks/useSteppedVisualization";
 import { StepControls } from "@/components/visualizations/shared/step-controls";
+import { getLocalizedText, type LocalizedText } from "@/lib/i18n";
+import { useLocale } from "@/lib/locale-context";
 
 // 启动阶段节点
 interface BootNode {
   id: string;
-  label: string;
+  label: string | LocalizedText;
   x: number;
   y: number;
   w: number;
@@ -16,14 +18,14 @@ interface BootNode {
 
 const NODES: BootNode[] = [
   { id: "entry", label: "dev-entry.ts", x: 250, y: 30, w: 140, h: 36 },
-  { id: "scan", label: "扫描缺失导入", x: 250, y: 90, w: 140, h: 36 },
+  { id: "scan", label: { zh: "扫描缺失导入", en: "Scan Missing Imports" }, x: 250, y: 90, w: 140, h: 36 },
   { id: "cli", label: "cli.tsx", x: 250, y: 160, w: 140, h: 36 },
   { id: "fast", label: "--version", x: 80, y: 230, w: 120, h: 36 },
   { id: "main", label: "main.tsx (785KB)", x: 400, y: 230, w: 160, h: 36 },
-  { id: "parallel", label: "并行预取 ×4", x: 400, y: 310, w: 160, h: 36 },
-  { id: "feature", label: "feature() 消除", x: 400, y: 380, w: 160, h: 36 },
+  { id: "parallel", label: { zh: "并行预取 ×4", en: "Parallel Prefetch ×4" }, x: 400, y: 310, w: 160, h: 36 },
+  { id: "feature", label: { zh: "feature() 消除", en: "feature() Elimination" }, x: 400, y: 380, w: 160, h: 36 },
   { id: "repl", label: "REPL >", x: 400, y: 450, w: 140, h: 36 },
-  { id: "output", label: "输出 → 退出", x: 80, y: 310, w: 120, h: 36 },
+  { id: "output", label: { zh: "输出 → 退出", en: "Output → Exit" }, x: 80, y: 310, w: 120, h: 36 },
 ];
 
 const EDGES: { from: string; to: string; label?: string }[] = [
@@ -65,40 +67,40 @@ const ACTIVE_EDGES_PER_STEP: string[][] = [
 
 // 右侧信息面板
 interface InfoBlock {
-  title: string;
-  content: string;
+  title: LocalizedText;
+  content: LocalizedText;
   color: string;
 }
 
 const INFO_PER_STEP: InfoBlock[][] = [
   [],
-  [{ title: "入口文件", content: "dev-entry.ts — 开发模式入口点", color: "bg-blue-600" }],
-  [{ title: "依赖检查", content: "扫描所有 import，确保 source map 还原完整", color: "bg-cyan-600" }],
-  [{ title: "CLI 入口", content: "cli.tsx — 快速路径分发器\n检查 argv 是否匹配快速路径", color: "bg-indigo-600" }],
-  [{ title: "快速路径 #1", content: "--version → 零模块加载\n不导入 main.tsx", color: "bg-emerald-600" }],
-  [{ title: "立即退出", content: "输出 '1.0.33' → process.exit(0)\n总耗时 < 50ms", color: "bg-emerald-500" }],
-  [{ title: "完整启动", content: "无快速路径匹配\n→ dynamic import('./main.tsx')\n→ 加载 785KB 核心", color: "bg-amber-600" }],
+  [{ title: { zh: "入口文件", en: "Entry File" }, content: { zh: "dev-entry.ts — 开发模式入口点", en: "dev-entry.ts — Development mode entry point" }, color: "bg-blue-600" }],
+  [{ title: { zh: "依赖检查", en: "Dependency Check" }, content: { zh: "扫描所有 import，确保 source map 还原完整", en: "Scan all imports, ensure source map restoration is complete" }, color: "bg-cyan-600" }],
+  [{ title: { zh: "CLI 入口", en: "CLI Entry" }, content: { zh: "cli.tsx — 快速路径分发器\n检查 argv 是否匹配快速路径", en: "cli.tsx — Fast path dispatcher\nCheck if argv matches fast path" }, color: "bg-indigo-600" }],
+  [{ title: { zh: "快速路径 #1", en: "Fast Path #1" }, content: { zh: "--version → 零模块加载\n不导入 main.tsx", en: "--version → Zero module load\nNo main.tsx import" }, color: "bg-emerald-600" }],
+  [{ title: { zh: "立即退出", en: "Immediate Exit" }, content: { zh: "输出 '1.0.33' → process.exit(0)\n总耗时 < 50ms", en: "Output '1.0.33' → process.exit(0)\nTotal time < 50ms" }, color: "bg-emerald-500" }],
+  [{ title: { zh: "完整启动", en: "Full Startup" }, content: { zh: "无快速路径匹配\n→ dynamic import('./main.tsx')\n→ 加载 785KB 核心", en: "No fast path match\n→ dynamic import('./main.tsx')\n→ Load 785KB core" }, color: "bg-amber-600" }],
   [
-    { title: "并行预取", content: "MDM 配置", color: "bg-purple-600" },
-    { title: "并行预取", content: "Keychain 凭证", color: "bg-purple-500" },
-    { title: "并行预取", content: "GrowthBook A/B", color: "bg-purple-700" },
-    { title: "并行预取", content: "Analytics 初始化", color: "bg-purple-800" },
+    { title: { zh: "并行预取", en: "Parallel Prefetch" }, content: { zh: "MDM 配置", en: "MDM Config" }, color: "bg-purple-600" },
+    { title: { zh: "并行预取", en: "Parallel Prefetch" }, content: { zh: "Keychain 凭证", en: "Keychain Credentials" }, color: "bg-purple-500" },
+    { title: { zh: "并行预取", en: "Parallel Prefetch" }, content: { zh: "GrowthBook A/B", en: "GrowthBook A/B" }, color: "bg-purple-700" },
+    { title: { zh: "并行预取", en: "Parallel Prefetch" }, content: { zh: "Analytics 初始化", en: "Analytics Init" }, color: "bg-purple-800" },
   ],
-  [{ title: "编译时消除", content: "feature('internal') → 已移除\nfeature('beta') → 保留\n零运行时开销", color: "bg-orange-600" }],
-  [{ title: "REPL 就绪", content: "> 提示符显示\n从按下回车到这里 ≈ 200ms\n启动完成!", color: "bg-green-600" }],
+  [{ title: { zh: "编译时消除", en: "Compile-time Elimination" }, content: { zh: "feature('internal') → 已移除\nfeature('beta') → 保留\n零运行时开销", en: "feature('internal') → Removed\nfeature('beta') → Preserved\nZero runtime overhead" }, color: "bg-orange-600" }],
+  [{ title: { zh: "REPL 就绪", en: "REPL Ready" }, content: { zh: "> 提示符显示\n从按下回车到这里 ≈ 200ms\n启动完成!", en: "> Prompt displayed\nFrom Enter to here ≈ 200ms\nStartup complete!" }, color: "bg-green-600" }],
 ];
 
 const STEP_INFO = [
-  { title: "启动流程概览", desc: "Claude Code 从 dev-entry.ts 出发，经过快速路径分发、并行预取到 REPL 就绪" },
-  { title: "开发入口", desc: "dev-entry.ts 是还原版的入口，负责检查 source map 还原是否完整" },
-  { title: "缺失导入扫描", desc: "遍历所有文件的 import 语句，统计无法解析的依赖数量" },
-  { title: "CLI 分发器", desc: "cli.tsx 检查 argv，--version / --dump-system-prompt 等走快速路径" },
-  { title: "快速路径: --version", desc: "匹配到 --version，不加载 main.tsx，零模块加载实现毫秒响应" },
-  { title: "零加载输出", desc: "直接输出版本号退出，避免了 785KB main.tsx 的解析和执行" },
-  { title: "完整启动路径", desc: "无快速路径匹配时，动态 import main.tsx，加载 Commander.js 参数解析" },
-  { title: "并行预取优化", desc: "4 个异步操作用 Promise.all 并行执行，不串行等待" },
-  { title: "编译时功能消除", desc: "feature() 宏在构建时决定功能开关，内部功能不进入外部构建" },
-  { title: "REPL 就绪", desc: "所有初始化完成，用户看到 > 提示符，可以开始交互" },
+  { title: { zh: "启动流程概览", en: "Startup Process Overview" }, desc: { zh: "Claude Code 从 dev-entry.ts 出发，经过快速路径分发、并行预取到 REPL 就绪", en: "Claude Code starts from dev-entry.ts, through fast path dispatch, parallel prefetch to REPL ready" } },
+  { title: { zh: "开发入口", en: "Dev Entry" }, desc: { zh: "dev-entry.ts 是还原版的入口，负责检查 source map 还原是否完整", en: "dev-entry.ts is the restored entry, checks if source map restoration is complete" } },
+  { title: { zh: "缺失导入扫描", en: "Missing Import Scan" }, desc: { zh: "遍历所有文件的 import 语句，统计无法解析的依赖数量", en: "Traverse all import statements, count unresolvable dependencies" } },
+  { title: { zh: "CLI 分发器", en: "CLI Dispatcher" }, desc: { zh: "cli.tsx 检查 argv，--version / --dump-system-prompt 等走快速路径", en: "cli.tsx checks argv, --version / --dump-system-prompt etc. take fast path" } },
+  { title: { zh: "快速路径: --version", en: "Fast Path: --version" }, desc: { zh: "匹配到 --version，不加载 main.tsx，零模块加载实现毫秒响应", en: "Match --version, no main.tsx load, zero module load for millisecond response" } },
+  { title: { zh: "零加载输出", en: "Zero Load Output" }, desc: { zh: "直接输出版本号退出，避免了 785KB main.tsx 的解析和执行", en: "Direct version output and exit, avoids 785KB main.tsx parsing and execution" } },
+  { title: { zh: "完整启动路径", en: "Full Startup Path" }, desc: { zh: "无快速路径匹配时，动态 import main.tsx，加载 Commander.js 参数解析", en: "When no fast path match, dynamic import main.tsx, load Commander.js argument parsing" } },
+  { title: { zh: "并行预取优化", en: "Parallel Prefetch Optimization" }, desc: { zh: "4 个异步操作用 Promise.all 并行执行，不串行等待", en: "4 async operations executed in parallel with Promise.all, not sequential" } },
+  { title: { zh: "编译时功能消除", en: "Compile-time Feature Elimination" }, desc: { zh: "feature() 宏在构建时决定功能开关，内部功能不进入外部构建", en: "feature() macro determines feature toggles at build time, internal features not in external builds" } },
+  { title: { zh: "REPL 就绪", en: "REPL Ready" }, desc: { zh: "所有初始化完成，用户看到 > 提示符，可以开始交互", en: "All initialization complete, user sees > prompt, ready for interaction" } },
 ];
 
 function getNode(id: string) {
@@ -121,6 +123,7 @@ function edgePath(fromId: string, toId: string) {
 }
 
 export default function BootstrapVisualization() {
+  const { locale } = useLocale();
   const viz = useSteppedVisualization({ totalSteps: 10, autoPlayInterval: 2500 });
   const activeNodes = ACTIVE_PER_STEP[viz.currentStep];
   const activeEdges = ACTIVE_EDGES_PER_STEP[viz.currentStep];
@@ -129,7 +132,7 @@ export default function BootstrapVisualization() {
   return (
     <section className="min-h-[520px] space-y-4">
       <h2 className="text-xl font-semibold text-zinc-100">
-        启动流程可视化
+        {locale === "zh" ? "启动流程可视化" : "Bootstrap Process Visualization"}
       </h2>
 
       <div className="rounded-lg border border-zinc-700 bg-zinc-900 p-4">
@@ -163,6 +166,7 @@ export default function BootstrapVisualization() {
                 const key = `${edge.from}->${edge.to}`;
                 const isActive = activeEdges.includes(key);
                 const d = edgePath(edge.from, edge.to);
+                const labelText = edge.label ? (typeof edge.label === "string" ? edge.label : getLocalizedText(edge.label, locale)) : undefined;
                 return (
                   <g key={key}>
                     <motion.path
@@ -174,14 +178,14 @@ export default function BootstrapVisualization() {
                       animate={{ stroke: isActive ? "#3b82f6" : "#3f3f46", strokeWidth: isActive ? 2.5 : 1.5 }}
                       transition={{ duration: 0.4 }}
                     />
-                    {edge.label && (
+                    {labelText && (
                       <text
                         x={(getNode(edge.from).x + getNode(edge.to).x) / 2}
                         y={(getNode(edge.from).y + getNode(edge.to).y) / 2 + 10}
                         textAnchor="middle"
                         className="fill-zinc-500 text-[9px]"
                       >
-                        {edge.label}
+                        {labelText}
                       </text>
                     )}
                   </g>
@@ -191,6 +195,7 @@ export default function BootstrapVisualization() {
               {NODES.map((node) => {
                 const isActive = activeNodes.includes(node.id);
                 const isGreen = node.id === "repl" || node.id === "output";
+                const labelText = typeof node.label === "string" ? node.label : getLocalizedText(node.label, locale);
                 return (
                   <g key={node.id}>
                     <motion.rect
@@ -219,7 +224,7 @@ export default function BootstrapVisualization() {
                       animate={{ fill: isActive ? "#ffffff" : "#a1a1aa" }}
                       transition={{ duration: 0.4 }}
                     >
-                      {node.label}
+                      {labelText}
                     </motion.text>
                   </g>
                 );
@@ -230,7 +235,7 @@ export default function BootstrapVisualization() {
           {/* 右侧信息面板 */}
           <div className="w-full lg:w-[40%]">
             <div className="mb-2 font-mono text-xs text-zinc-500">
-              执行细节
+              {locale === "zh" ? "执行细节" : "Execution Details"}
             </div>
             <div className="min-h-[320px] space-y-2 rounded-md border border-zinc-800 bg-zinc-950 p-3">
               <AnimatePresence mode="popLayout">
@@ -242,7 +247,7 @@ export default function BootstrapVisualization() {
                     exit={{ opacity: 0 }}
                     className="py-12 text-center text-xs text-zinc-600"
                   >
-                    点击播放查看启动流程
+                    {locale === "zh" ? "点击播放查看启动流程" : "Click play to view startup process"}
                   </motion.div>
                 )}
                 {infoBlocks.map((block, i) => (
@@ -255,10 +260,10 @@ export default function BootstrapVisualization() {
                     className={`rounded-md px-3 py-2.5 ${block.color}`}
                   >
                     <div className="font-mono text-[11px] font-semibold text-white">
-                      {block.title}
+                      {getLocalizedText(block.title, locale)}
                     </div>
                     <div className="mt-1 whitespace-pre-line text-[10px] text-white/80">
-                      {block.content}
+                      {getLocalizedText(block.content, locale)}
                     </div>
                   </motion.div>
                 ))}
@@ -276,8 +281,8 @@ export default function BootstrapVisualization() {
         onReset={viz.reset}
         isPlaying={viz.isPlaying}
         onToggleAutoPlay={viz.toggleAutoPlay}
-        stepTitle={STEP_INFO[viz.currentStep].title}
-        stepDescription={STEP_INFO[viz.currentStep].desc}
+        stepTitle={getLocalizedText(STEP_INFO[viz.currentStep].title, locale)}
+        stepDescription={getLocalizedText(STEP_INFO[viz.currentStep].desc, locale)}
       />
     </section>
   );

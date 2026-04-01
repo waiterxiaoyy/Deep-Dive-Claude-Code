@@ -1,1 +1,94 @@
-{"version":"ch04","title":"工具架构","description":"50+ 工具的注册、Schema 验证、权限检查和执行分发流程","steps":[{"type":"system_event","content":"toolRegistry = new Map()","annotation":"初始化空的工具注册表"},{"type":"system_event","content":"注册文件工具:\n  FileRead → schema: { path: z.string() }\n  FileEdit → schema: { path, old_str, new_str }\n  FileWrite → schema: { path, content }","annotation":"文件操作三件套注册到 Map"},{"type":"system_event","content":"注册 BashTool:\n  schema: { command: z.string() }\n  安全层: bashSecurity (100KB)\n  权限层: bashPermissions (96KB)","annotation":"最复杂的工具，自带 300KB 安全代码"},{"type":"user_message","content":"帮我查看 src 目录有哪些文件","annotation":"用户请求触发工具调用"},{"type":"tool_call","content":"{ tool: 'BashTool', input: { command: 'ls src/' } }","toolName":"BashTool","annotation":"模型选择使用 BashTool"},{"type":"system_event","content":"工具分发:\n1. toolRegistry.get('BashTool') ✓\n2. schema.parse(input) ✓\n3. permissions.check() ✓ (ls 是只读)\n4. tool.execute() → 开始执行","annotation":"4 步分发流程：查找→验证→权限→执行"},{"type":"tool_result","content":"auth.ts  index.ts  utils/  tests/","toolName":"BashTool","annotation":"工具执行完成，结果返回给模型"},{"type":"assistant_text","content":"src 目录下有 4 个文件/目录：auth.ts, index.ts, utils/, tests/","annotation":"模型看到工具结果后回复用户"}]}
+{
+  "version": "ch04",
+  "title": {
+    "zh": "Shell安全体系",
+    "en": "Shell Security"
+  },
+  "description": {
+    "zh": "50+ 工具的注册、Schema 验证、权限检查和执行分发流程",
+    "en": "Registration, schema validation, permission check, and execution dispatch for 50+ tools"
+  },
+  "steps": [
+    {
+      "type": "system_event",
+      "content": "toolRegistry = new Map()",
+      "annotation": {
+        "zh": "初始化空的工具注册表",
+        "en": "Initialize empty tool registry"
+      }
+    },
+    {
+      "type": "system_event",
+      "content": {
+        "zh": "注册文件工具:\n  FileRead → schema: { path: z.string() }\n  FileEdit → schema: { path, old_str, new_str }\n  FileWrite → schema: { path, content }",
+        "en": "Register file tools:\n  FileRead → schema: { path: z.string() }\n  FileEdit → schema: { path, old_str, new_str }\n  FileWrite → schema: { path, content }"
+      },
+      "annotation": {
+        "zh": "文件操作三件套注册到 Map",
+        "en": "File operation trio registered to Map"
+      }
+    },
+    {
+      "type": "system_event",
+      "content": {
+        "zh": "注册 BashTool:\n  schema: { command: z.string() }\n  安全层: bashSecurity (100KB)\n  权限层: bashPermissions (96KB)",
+        "en": "Register BashTool:\n  schema: { command: z.string() }\n  Security layer: bashSecurity (100KB)\n  Permission layer: bashPermissions (96KB)"
+      },
+      "annotation": {
+        "zh": "最复杂的工具，自带 300KB 安全代码",
+        "en": "Most complex tool, comes with 300KB security code"
+      }
+    },
+    {
+      "type": "user_message",
+      "content": {
+        "zh": "帮我查看 src 目录有哪些文件",
+        "en": "Help me see what files are in the src directory"
+      },
+      "annotation": {
+        "zh": "用户请求触发工具调用",
+        "en": "User request triggers tool call"
+      }
+    },
+    {
+      "type": "tool_call",
+      "content": "{ tool: 'BashTool', input: { command: 'ls src/' } }",
+      "toolName": "BashTool",
+      "annotation": {
+        "zh": "模型选择使用 BashTool",
+        "en": "Model chooses to use BashTool"
+      }
+    },
+    {
+      "type": "system_event",
+      "content": {
+        "zh": "工具分发:\n1. toolRegistry.get('BashTool') ✓\n2. schema.parse(input) ✓\n3. permissions.check() ✓ (ls 是只读)\n4. tool.execute() → 开始执行",
+        "en": "Tool dispatch:\n1. toolRegistry.get('BashTool') ✓\n2. schema.parse(input) ✓\n3. permissions.check() ✓ (ls is read-only)\n4. tool.execute() → Start execution"
+      },
+      "annotation": {
+        "zh": "4 步分发流程：查找→验证→权限→执行",
+        "en": "4-step dispatch: lookup→validate→permission→execute"
+      }
+    },
+    {
+      "type": "tool_result",
+      "content": "auth.ts  index.ts  utils/  tests/",
+      "toolName": "BashTool",
+      "annotation": {
+        "zh": "工具执行完成，结果返回给模型",
+        "en": "Tool execution complete, result returned to model"
+      }
+    },
+    {
+      "type": "assistant_text",
+      "content": {
+        "zh": "src 目录下有 4 个文件/目录：auth.ts, index.ts, utils/, tests/",
+        "en": "There are 4 files/directories in src: auth.ts, index.ts, utils/, tests/"
+      },
+      "annotation": {
+        "zh": "模型看到工具结果后回复用户",
+        "en": "Model replies to user after seeing tool result"
+      }
+    }
+  ]
+}

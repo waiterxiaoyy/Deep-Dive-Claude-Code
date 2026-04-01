@@ -1,1 +1,101 @@
-{"version":"ch12","title":"生产级模式","description":"错误重试、优雅关机、会话持久化、A/B 测试等生产工程模式","steps":[{"type":"system_event","content":"API 调用失败:\n  Error: 529 API Overloaded\n  → 启动指数退避重试\n  → 等待 1s...","annotation":"生产环境 API 不总是可用"},{"type":"system_event","content":"重试 #1 (1s 后):\n  Error: 529 API Overloaded\n  → 等待 2s...","annotation":"指数退避: 1s → 2s → 4s"},{"type":"system_event","content":"重试 #2 (2s 后):\n  ✓ 200 OK\n  → API 调用成功!","annotation":"第三次尝试成功"},{"type":"system_event","content":"收到 SIGTERM 信号\n→ 停止接受新任务\n→ 等待 2 个进行中的任务...\n→ 保存会话状态到磁盘\n→ 关闭 MCP 连接","annotation":"优雅关机: 不丢失任何工作"},{"type":"system_event","content":"会话持久化:\n  sessionStorage.save({\n    messages: [...],\n    toolState: {...},\n    id: 'session-abc123'\n  })\n  → 写入 ~/.claude/sessions/","annotation":"下次可以完美恢复对话"},{"type":"system_event","content":"A/B 测试:\n  GrowthBook.isOn('new_compact_v2')\n  → 用户在 10% 实验组\n  → 使用新压缩算法\n\n  结果: 压缩率提升 15%","annotation":"数据驱动产品决策"},{"type":"system_event","content":"错误遥测 (匿名):\n  { type: 'api_timeout',\n    retry_count: 2,\n    success: true }\n  → 不包含用户代码/对话","annotation":"匿名遥测帮助改进产品"},{"type":"assistant_text","content":"生产级 Agent = Demo + 十倍工程量\n960 个文件的意义在这 13 章中。","annotation":"教学版 30 行 → 生产版 960 个文件"}]}
+{
+  "version": "ch12",
+  "title": {
+    "zh": "生产级工程模式",
+    "en": "Production Patterns"
+  },
+  "description": {
+    "zh": "错误重试、优雅关机、会话持久化、A/B 测试等生产工程模式",
+    "en": "Production patterns: error retry, graceful shutdown, session persistence, A/B testing"
+  },
+  "steps": [
+    {
+      "type": "system_event",
+      "content": {
+        "zh": "API 调用失败:\n  Error: 529 API Overloaded\n  → 启动指数退避重试\n  → 等待 1s...",
+        "en": "API call failed:\n  Error: 529 API Overloaded\n  → Start exponential backoff retry\n  → Wait 1s..."
+      },
+      "annotation": {
+        "zh": "生产环境 API 不总是可用",
+        "en": "Production APIs are not always available"
+      }
+    },
+    {
+      "type": "system_event",
+      "content": {
+        "zh": "重试 #1 (1s 后):\n  Error: 529 API Overloaded\n  → 等待 2s...",
+        "en": "Retry #1 (after 1s):\n  Error: 529 API Overloaded\n  → Wait 2s..."
+      },
+      "annotation": {
+        "zh": "指数退避: 1s → 2s → 4s",
+        "en": "Exponential backoff: 1s → 2s → 4s"
+      }
+    },
+    {
+      "type": "system_event",
+      "content": {
+        "zh": "重试 #2 (2s 后):\n  ✓ 200 OK\n  → API 调用成功!",
+        "en": "Retry #2 (after 2s):\n  ✓ 200 OK\n  → API call succeeded!"
+      },
+      "annotation": {
+        "zh": "第三次尝试成功",
+        "en": "Third attempt succeeded"
+      }
+    },
+    {
+      "type": "system_event",
+      "content": {
+        "zh": "收到 SIGTERM 信号\n→ 停止接受新任务\n→ 等待 2 个进行中的任务...\n→ 保存会话状态到磁盘\n→ 关闭 MCP 连接",
+        "en": "Received SIGTERM signal\n→ Stop accepting new tasks\n→ Wait for 2 in-progress tasks...\n→ Save session state to disk\n→ Close MCP connections"
+      },
+      "annotation": {
+        "zh": "优雅关机: 不丢失任何工作",
+        "en": "Graceful shutdown: no work lost"
+      }
+    },
+    {
+      "type": "system_event",
+      "content": {
+        "zh": "会话持久化:\n  .codebuddy/history/2024-03-15.db\n  → messages[] (3.2 MB)\n  → memory (18 条)\n  → tool_results (压缩存储)\n\n下次恢复时自动加载",
+        "en": "Session persistence:\n  .codebuddy/history/2024-03-15.db\n  → messages[] (3.2 MB)\n  → memory (18 items)\n  → tool_results (compressed)\n\nAuto-load on next restore"
+      },
+      "annotation": {
+        "zh": "SQLite 持久化所有会话状态",
+        "en": "SQLite persists all session state"
+      }
+    },
+    {
+      "type": "system_event",
+      "content": {
+        "zh": "A/B 测试分流:\n  用户 ID hash → 0.73\n  实验组: tengu_ultraplan_model\n  → 使用 opus46 模型\n  (对照组使用 sonnet45)",
+        "en": "A/B test routing:\n  User ID hash → 0.73\n  Experiment group: tengu_ultraplan_model\n  → Use opus46 model\n  (Control group uses sonnet45)"
+      },
+      "annotation": {
+        "zh": "GrowthBook feature flags 灰度放量",
+        "en": "GrowthBook feature flags gradual rollout"
+      }
+    },
+    {
+      "type": "system_event",
+      "content": {
+        "zh": "Token 预算保护:\n  当前: 185K / 200K (92%)\n  → L1 微压缩: 40K\n  → L2 智能总结: 70K → 25K\n  → 释放空间继续对话",
+        "en": "Token budget protection:\n  Current: 185K / 200K (92%)\n  → L1 micro-compression: 40K\n  → L2 smart summarization: 70K → 25K\n  → Free space for continued conversation"
+      },
+      "annotation": {
+        "zh": "自动上下文管理,永不 OOM",
+        "en": "Auto context management, never OOM"
+      }
+    },
+    {
+      "type": "assistant_text",
+      "content": {
+        "zh": "生产级保障机制:\n\n1. 错误重试 (指数退避)\n2. 优雅关机 (SIGTERM处理)\n3. 会话持久化 (SQLite)\n4. A/B 测试 (GrowthBook)\n5. 上下文压缩 (自动回收)\n6. 权限引擎 (多层防护)\n7. 链路追踪 (Jaeger)\n8. 监控告警 (Sentry)",
+        "en": "Production safeguards:\n\n1. Error retry (exponential backoff)\n2. Graceful shutdown (SIGTERM handler)\n3. Session persistence (SQLite)\n4. A/B testing (GrowthBook)\n5. Context compression (auto-reclaim)\n6. Permission engine (multi-layer protection)\n7. Tracing (Jaeger)\n8. Monitoring & alerts (Sentry)"
+      },
+      "annotation": {
+        "zh": "200+ 文件构建的生产级基础设施",
+        "en": "Production-grade infrastructure built with 200+ files"
+      }
+    }
+  ]
+}

@@ -7,11 +7,11 @@
 
 **👉 [Live Demo](https://deep-dive-claude-code.vercel.app/)**
 
-![Home](./imgs/1.png)
+![Home](./imgs/1-en.png)
 
-![Chapter Detail](./imgs/2.png)
+![Chapter Detail](./imgs/2-en.png)
 
-![Learning Path](./imgs/3.png)
+![Learning Path](./imgs/3-en.png)
 
 ## 📚 13-Chapter Learning Path
 

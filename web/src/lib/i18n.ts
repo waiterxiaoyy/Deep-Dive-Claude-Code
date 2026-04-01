@@ -94,6 +94,10 @@ export const UI_TEXT: Record<Locale, {
   chapter_needs_key: string;
   chapter_runnable: string;
   chapter_code_wip: string;
+  // simulator
+  sim_title: string;
+  sim_no_scenario: string;
+  sim_start_hint: string;
 }> = {
   zh: {
     nav_home: "首页",
@@ -175,6 +179,9 @@ export const UI_TEXT: Record<Locale, {
     chapter_needs_key: "需要配置 API Key",
     chapter_runnable: "可直接运行",
     chapter_code_wip: "该章节的源码示例正在开发中...",
+    sim_title: "Agent 循环模拟器",
+    sim_no_scenario: "该章节暂无模拟场景",
+    sim_start_hint: "点击 播放 或 单步 开始模拟",
   },
   en: {
     nav_home: "Home",
@@ -254,6 +261,11 @@ export const UI_TEXT: Record<Locale, {
     chapter_total_size: "Total size ~",
     chapter_run_demo: "Run Demo",
     chapter_needs_key: "Requires API Key",
+    chapter_runnable: "Directly runnable",
+    chapter_code_wip: "Source code examples for this chapter are under development...",
+    sim_title: "Agent Loop Simulator",
+    sim_no_scenario: "No simulation scenario available for this chapter",
+    sim_start_hint: "Click Play or Step to start simulation",
     chapter_runnable: "Directly runnable",
     chapter_code_wip: "Source code example for this chapter is under development...",
   },
@@ -507,3 +519,19 @@ export const ARCH_LAYERS_I18N: Record<Locale, Array<{ name: string; files: strin
     { name: "Hidden Features (Feature Flags)", color: "#F59E0B", files: "buddy/ + ultraplan + undercover + daemon + kairos", size: "500KB+" },
   ],
 };
+
+/* ─── 本地化文本辅助函数 ─── */
+import { LocalizedText } from "@/types/agent-data";
+
+/**
+ * 获取本地化文本
+ * @param text 本地化文本对象或字符串
+ * @param locale 语言（默认中文）
+ * @returns 对应语言的文本
+ */
+export function getLocalizedText(text: LocalizedText, locale: Locale = "zh"): string {
+  if (typeof text === "string") {
+    return text;
+  }
+  return text[locale] || text.zh;
+}

@@ -3,17 +3,19 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useSteppedVisualization } from "@/hooks/useSteppedVisualization";
 import { StepControls } from "@/components/visualizations/shared/step-controls";
+import { getLocalizedText, type Locale } from "@/lib/i18n";
+import { useLocale } from "@/lib/locale-context";
 
-// 查询引擎流程图节点
+// 双语化节点标签
 const NODES = [
-  { id: "user", label: "User Input", x: 240, y: 30, w: 130, h: 36 },
-  { id: "budget", label: "Token Budget", x: 240, y: 100, w: 130, h: 36 },
-  { id: "api", label: "API Call", x: 240, y: 180, w: 130, h: 36 },
+  { id: "user", label: { zh: "用户输入", en: "User Input" }, x: 240, y: 30, w: 130, h: 36 },
+  { id: "budget", label: { zh: "Token预算", en: "Token Budget" }, x: 240, y: 100, w: 130, h: 36 },
+  { id: "api", label: { zh: "API调用", en: "API Call" }, x: 240, y: 180, w: 130, h: 36 },
   { id: "check", label: "stop_reason?", x: 240, y: 270, w: 150, h: 45 },
-  { id: "exec", label: "Execute Tool", x: 240, y: 370, w: 130, h: 36 },
-  { id: "perm", label: "Permission Check", x: 80, y: 370, w: 140, h: 36 },
-  { id: "append", label: "Append Result", x: 240, y: 440, w: 130, h: 36 },
-  { id: "done", label: "Return to User", x: 440, y: 270, w: 140, h: 36 },
+  { id: "exec", label: { zh: "执行工具", en: "Execute Tool" }, x: 240, y: 370, w: 130, h: 36 },
+  { id: "perm", label: { zh: "权限检查", en: "Permission Check" }, x: 80, y: 370, w: 140, h: 36 },
+  { id: "append", label: { zh: "追加结果", en: "Append Result" }, x: 240, y: 440, w: 130, h: 36 },
+  { id: "done", label: { zh: "返回用户", en: "Return to User" }, x: 440, y: 270, w: 140, h: 36 },
 ];
 
 const EDGES = [
@@ -52,33 +54,63 @@ const ACTIVE_EDGES: string[][] = [
   ["check->done"],
 ];
 
-interface Msg { role: string; detail: string; color: string; }
+interface Msg { role: string; detail: { zh: string; en: string }; color: string; }
 
 const MESSAGES: (Msg | null)[][] = [
   [],
-  [{ role: "user", detail: "修复 auth.ts 的登录 bug", color: "bg-blue-500" }],
+  [{ role: "user", detail: { zh: "修复 auth.ts 的登录 bug", en: "Fix login bug in auth.ts" }, color: "bg-blue-500" }],
   [],
   [],
-  [{ role: "assistant", detail: "思考中... 需要先看代码", color: "bg-zinc-600" }],
-  [{ role: "tool_call", detail: "FileRead → src/auth.ts", color: "bg-amber-600" }],
-  [{ role: "tool_result", detail: "auth.ts 文件内容 (48 行)", color: "bg-emerald-600" }],
+  [{ role: "assistant", detail: { zh: "思考中... 需要先看代码", en: "Thinking... Need to read code first" }, color: "bg-zinc-600" }],
+  [{ role: "tool_call", detail: { zh: "FileRead → src/auth.ts", en: "FileRead → src/auth.ts" }, color: "bg-amber-600" }],
+  [{ role: "tool_result", detail: { zh: "auth.ts 文件内容 (48 行)", en: "auth.ts file content (48 lines)" }, color: "bg-emerald-600" }],
   [],
-  [{ role: "tool_call", detail: "FileEdit → 修复密码比较", color: "bg-amber-600" },
-   { role: "tool_result", detail: "✓ 替换了 1 处", color: "bg-emerald-600" }],
-  [{ role: "assistant", detail: "已修复! 改为 bcrypt 安全比对", color: "bg-purple-500" }],
+  [{ role: "tool_call", detail: { zh: "FileEdit → 修复密码比较", en: "FileEdit → Fix password comparison" }, color: "bg-amber-600" },
+   { role: "tool_result", detail: { zh: "✓ 替换了 1 处", en: "✓ Replaced 1 occurrence" }, color: "bg-emerald-600" }],
+  [{ role: "assistant", detail: { zh: "已修复! 改为 bcrypt 安全比对", en: "Fixed! Changed to bcrypt secure comparison" }, color: "bg-purple-500" }],
 ];
 
 const STEP_INFO = [
-  { title: "QueryEngine 循环", desc: "核心循环: 用户输入 → API 调用 → 工具执行 → 回传结果，直到模型 stop" },
-  { title: "用户输入", desc: "用户消息加入 messages[] 数组" },
-  { title: "Token 预算", desc: "analyzeContext() 计算可用 Token，裁剪超预算的历史消息" },
-  { title: "API 调用", desc: "发送 messages[] 到 Claude API，包含 system prompt + 工具定义" },
-  { title: "响应解析", desc: "检查 stop_reason：'tool_use' → 继续循环，'end_turn' → 退出" },
-  { title: "工具执行 + 权限检查", desc: "每个工具调用先经过 Permission Engine 验证路径和安全性" },
-  { title: "结果追加", desc: "工具执行结果追加到 messages[]，作为下一轮 API 调用的上下文" },
-  { title: "循环回 API", desc: "带着新的工具结果回到 API 调用，模型看到完整上下文" },
-  { title: "第二轮工具调用", desc: "模型决定编辑文件，FileEdit 工具执行并返回结果" },
-  { title: "循环退出", desc: "stop_reason = 'end_turn'，模型完成任务，响应返回用户" },
+  { 
+    title: { zh: "QueryEngine 循环", en: "QueryEngine Loop" },
+    desc: { zh: "核心循环: 用户输入 → API 调用 → 工具执行 → 回传结果，直到模型 stop", en: "Core loop: User input → API call → Tool execution → Return result, until model stops" }
+  },
+  { 
+    title: { zh: "用户输入", en: "User Input" },
+    desc: { zh: "用户消息加入 messages[] 数组", en: "User message added to messages[] array" }
+  },
+  { 
+    title: { zh: "Token 预算", en: "Token Budget" },
+    desc: { zh: "analyzeContext() 计算可用 Token，裁剪超预算的历史消息", en: "analyzeContext() calculates available tokens, trims over-budget history" }
+  },
+  { 
+    title: { zh: "API 调用", en: "API Call" },
+    desc: { zh: "发送 messages[] 到 Claude API，包含 system prompt + 工具定义", en: "Send messages[] to Claude API, including system prompt + tool definitions" }
+  },
+  { 
+    title: { zh: "响应解析", en: "Response Parsing" },
+    desc: { zh: "检查 stop_reason：'tool_use' → 继续循环，'end_turn' → 退出", en: "Check stop_reason: 'tool_use' → continue loop, 'end_turn' → exit" }
+  },
+  { 
+    title: { zh: "工具执行 + 权限检查", en: "Tool Execution + Permission Check" },
+    desc: { zh: "每个工具调用先经过 Permission Engine 验证路径和安全性", en: "Each tool call first goes through Permission Engine for path and security validation" }
+  },
+  { 
+    title: { zh: "结果追加", en: "Append Result" },
+    desc: { zh: "工具执行结果追加到 messages[]，作为下一轮 API 调用的上下文", en: "Tool execution result appended to messages[], as context for next API call" }
+  },
+  { 
+    title: { zh: "循环回 API", en: "Loop Back to API" },
+    desc: { zh: "带着新的工具结果回到 API 调用，模型看到完整上下文", en: "Return to API call with new tool results, model sees full context" }
+  },
+  { 
+    title: { zh: "第二轮工具调用", en: "Second Tool Call" },
+    desc: { zh: "模型决定编辑文件，FileEdit 工具执行并返回结果", en: "Model decides to edit file, FileEdit tool executes and returns result" }
+  },
+  { 
+    title: { zh: "循环退出", en: "Exit Loop" },
+    desc: { zh: "stop_reason = 'end_turn'，模型完成任务，响应返回用户", en: "stop_reason = 'end_turn', model completes task, response returns to user" }
+  },
 ];
 
 function getNode(id: string) { return NODES.find((n) => n.id === id)!; }
@@ -97,6 +129,7 @@ function edgePath(fromId: string, toId: string) {
 }
 
 export default function QueryEngineVisualization() {
+  const { locale } = useLocale();
   const viz = useSteppedVisualization({ totalSteps: 10, autoPlayInterval: 2500 });
   const an = ACTIVE_NODES[viz.currentStep];
   const ae = ACTIVE_EDGES[viz.currentStep];
@@ -109,7 +142,7 @@ export default function QueryEngineVisualization() {
   return (
     <section className="min-h-[520px] space-y-4">
       <h2 className="text-xl font-semibold text-zinc-100">
-        查询引擎循环
+        {locale === "zh" ? "查询引擎循环" : "Query Engine Loop"}
       </h2>
 
       <div className="rounded-lg border border-zinc-700 bg-zinc-900 p-4">
@@ -160,6 +193,7 @@ export default function QueryEngineVisualization() {
                 const fillActive = isDone ? "#581c87" : isPerm ? "#78350f" : "#1e3a5f";
                 const strokeActive = isDone ? "#a855f7" : isPerm ? "#f59e0b" : "#3b82f6";
                 const filterStr = active ? (isDone ? "url(#gl-p2)" : "url(#gl-b2)") : "none";
+                const labelText = typeof n.label === "string" ? n.label : getLocalizedText(n.label, locale);
 
                 // diamond for check
                 if (n.id === "check") {
@@ -172,7 +206,7 @@ export default function QueryEngineVisualization() {
                         animate={{ fill: active ? fillActive : "#18181b", stroke: active ? strokeActive : "#3f3f46" }}
                         transition={{ duration: 0.4 }} />
                       <motion.text x={cx} y={cy+4} textAnchor="middle" fontSize={10} fontWeight={600} fontFamily="monospace"
-                        animate={{ fill: active ? "#fff" : "#a1a1aa" }} transition={{ duration: 0.4 }}>{n.label}</motion.text>
+                        animate={{ fill: active ? "#fff" : "#a1a1aa" }} transition={{ duration: 0.4 }}>{labelText}</motion.text>
                     </g>
                   );
                 }
@@ -185,7 +219,7 @@ export default function QueryEngineVisualization() {
                       animate={{ fill: active ? fillActive : "#18181b", stroke: active ? strokeActive : "#3f3f46" }}
                       transition={{ duration: 0.4 }} />
                     <motion.text x={n.x} y={n.y+4} textAnchor="middle" fontSize={11} fontWeight={600} fontFamily="monospace"
-                      animate={{ fill: active ? "#fff" : "#a1a1aa" }} transition={{ duration: 0.4 }}>{n.label}</motion.text>
+                      animate={{ fill: active ? "#fff" : "#a1a1aa" }} transition={{ duration: 0.4 }}>{labelText}</motion.text>
                   </g>
                 );
               })}
@@ -214,7 +248,7 @@ export default function QueryEngineVisualization() {
                     transition={{ duration: 0.35, type: "spring", bounce: 0.3 }}
                     className={`rounded-md px-3 py-2 ${m.color}`}>
                     <div className="font-mono text-[11px] font-semibold text-white">{m.role}</div>
-                    <div className="mt-0.5 text-[10px] text-white/80">{m.detail}</div>
+                    <div className="mt-0.5 text-[10px] text-white/80">{getLocalizedText(m.detail, locale)}</div>
                   </motion.div>
                 ))}
               </AnimatePresence>
@@ -231,8 +265,8 @@ export default function QueryEngineVisualization() {
       <StepControls currentStep={viz.currentStep} totalSteps={viz.totalSteps}
         onPrev={viz.prev} onNext={viz.next} onReset={viz.reset}
         isPlaying={viz.isPlaying} onToggleAutoPlay={viz.toggleAutoPlay}
-        stepTitle={STEP_INFO[viz.currentStep].title}
-        stepDescription={STEP_INFO[viz.currentStep].desc} />
+        stepTitle={getLocalizedText(STEP_INFO[viz.currentStep].title, locale)}
+        stepDescription={getLocalizedText(STEP_INFO[viz.currentStep].desc, locale)} />
     </section>
   );
 }

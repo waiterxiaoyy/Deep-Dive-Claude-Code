@@ -3,6 +3,7 @@
 import { use, useMemo, useState } from "react";
 import Link from "next/link";
 import sourcesData from "@/data/generated/sources.json";
+import { useLocale } from "@/lib/locale-context";
 
 interface SourceFile {
   id: string;
@@ -50,16 +51,27 @@ function highlightLine(line: string): React.ReactNode[] {
 export default function SourcePage({ params }: { params: Promise<{ file: string }> }) {
   const { file: fileId } = use(params);
   const [searchTerm, setSearchTerm] = useState("");
+  const { locale } = useLocale();
 
   const source = useMemo(() => {
     return (sourcesData as SourceFile[]).find((s) => s.id === fileId);
   }, [fileId]);
 
+  const t = {
+    notFound: locale === "zh" ? "源码文件未找到" : "Source file not found",
+    backToHome: locale === "zh" ? "返回首页" : "Back to Home",
+    home: locale === "zh" ? "首页" : "Home",
+    source: locale === "zh" ? "源码" : "Source",
+    lines: locale === "zh" ? "行" : "lines",
+    searchPlaceholder: locale === "zh" ? "搜索代码..." : "Search code...",
+    matches: locale === "zh" ? "匹配" : "matches",
+  };
+
   if (!source) {
     return (
       <div className="mx-auto max-w-6xl px-4 py-8">
-        <p className="text-zinc-500">源码文件未找到: {fileId}</p>
-        <Link href="/" className="text-blue-400">← 返回首页</Link>
+        <p className="text-zinc-500">{t.notFound}: {fileId}</p>
+        <Link href="/" className="text-blue-400">← {t.backToHome}</Link>
       </div>
     );
   }
@@ -75,9 +87,9 @@ export default function SourcePage({ params }: { params: Promise<{ file: string 
     <div className="mx-auto max-w-7xl px-4 py-8">
       {/* 导航 */}
       <nav className="mb-6 flex items-center gap-2 text-sm text-zinc-500">
-        <Link href="/" className="hover:text-white">首页</Link>
+        <Link href="/" className="hover:text-white">{t.home}</Link>
         <span>/</span>
-        <span className="text-white">源码</span>
+        <span className="text-white">{t.source}</span>
         <span>/</span>
         <span className="font-mono text-blue-400">{source.path}</span>
       </nav>
@@ -88,7 +100,7 @@ export default function SourcePage({ params }: { params: Promise<{ file: string 
           <h1 className="text-2xl font-bold font-mono">{source.path}</h1>
           <div className="mt-1 flex items-center gap-4 text-sm text-zinc-500">
             <span>{source.sizeKB} KB</span>
-            <span>{source.lines} 行</span>
+            <span>{source.lines} {t.lines}</span>
           </div>
         </div>
         {/* 搜索 */}
@@ -97,11 +109,11 @@ export default function SourcePage({ params }: { params: Promise<{ file: string 
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="搜索代码..."
+            placeholder={t.searchPlaceholder}
             className="rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-1.5 text-sm text-zinc-200 placeholder-zinc-600 outline-none focus:border-blue-500"
           />
           {searchTerm && (
-            <span className="text-xs text-zinc-500">{matchCount} 匹配</span>
+            <span className="text-xs text-zinc-500">{matchCount} {t.matches}</span>
           )}
         </div>
       </div>

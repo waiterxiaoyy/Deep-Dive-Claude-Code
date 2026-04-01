@@ -6,7 +6,7 @@
  * 2. 多传输方式 (stdio / SSE / WebSocket)
  * 3. 动态工具注册 (MCP 工具 + 内置工具 统一分发)
  *
- * 对应源码:
+ * Source: 
  *   src/services/mcp/client.ts   (116KB) — MCP 客户端
  *   src/services/mcp/config.ts   (50KB)  — 配置管理
  *   src/services/mcp/types.ts    (7KB)   — 类型定义

@@ -308,42 +308,44 @@ export default function HomePage() {
     <div className="mx-auto max-w-7xl px-4 py-8">
 
       {/* ── Hero Section ── */}
-      <section className="relative flex flex-col items-center overflow-hidden pt-16 pb-20 text-center">
+      <section className="relative flex flex-col items-center overflow-hidden pt-10 pb-14 text-center sm:pt-16 sm:pb-20">
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <div className="absolute -top-40 left-1/2 h-80 w-[800px] -translate-x-1/2 rounded-full bg-blue-500/5 blur-3xl" />
           <div className="absolute -top-20 left-1/3 h-60 w-[600px] -translate-x-1/2 rounded-full bg-purple-500/5 blur-3xl" />
         </div>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="relative">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-zinc-800 bg-zinc-900/80 px-4 py-1.5 text-xs text-zinc-400">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="relative px-2">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-zinc-800 bg-zinc-900/80 px-3 py-1.5 text-[11px] text-zinc-400 sm:px-4 sm:text-xs">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
             {t.hero_badge}
           </div>
-          <h1 className="text-4xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
+          <h1 className="text-3xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
             <span className="bg-gradient-to-r from-white via-zinc-300 to-zinc-500 bg-clip-text text-transparent">Deep Dive</span>
             <br />
             <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">Claude Code</span>
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-zinc-400 sm:text-lg">
+          <p className="mx-auto mt-4 max-w-2xl px-2 text-sm leading-relaxed text-zinc-400 sm:mt-6 sm:px-0 sm:text-lg">
             {t.hero_subtitle_1}
             <br />
             {t.hero_subtitle_2}
           </p>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.6 }} className="relative mt-10 flex gap-4">
-          <Link href="/chapter/ch01" className="group relative inline-flex items-center gap-2 rounded-xl bg-white px-10 py-4 text-base font-bold text-zinc-900 no-underline shadow-[0_0_30px_rgba(255,255,255,0.15)] transition-all hover:bg-zinc-100 hover:shadow-[0_0_40px_rgba(255,255,255,0.25)]">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.6 }} className="relative mt-8 flex w-full flex-col items-center gap-3 px-4 sm:mt-10 sm:w-auto sm:flex-row sm:gap-4 sm:px-0">
+          <Link href="/chapter/ch01" className="group relative inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white px-8 py-3.5 text-sm font-bold text-zinc-900 no-underline shadow-[0_0_30px_rgba(255,255,255,0.15)] transition-all hover:bg-zinc-100 hover:shadow-[0_0_40px_rgba(255,255,255,0.25)] sm:w-auto sm:px-10 sm:py-4 sm:text-base">
             {t.hero_cta_start}
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" className="transition-transform group-hover:translate-x-0.5">
               <path d="M4 9h10m0 0L10.5 5.5M14 9l-3.5 3.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </Link>
-          <Link href="/architecture" className="inline-flex items-center gap-2 rounded-xl border border-zinc-600 bg-zinc-900/80 px-8 py-4 text-base font-semibold text-zinc-200 no-underline transition hover:border-zinc-400 hover:bg-zinc-800 hover:text-white">
-            {t.hero_cta_arch}
-          </Link>
-          <Link href="/timeline" className="inline-flex items-center gap-2 rounded-xl border border-zinc-600 bg-zinc-900/80 px-8 py-4 text-base font-semibold text-zinc-200 no-underline transition hover:border-zinc-400 hover:bg-zinc-800 hover:text-white">
-            {t.hero_cta_timeline}
-          </Link>
+          <div className="flex w-full gap-3 sm:w-auto sm:gap-4">
+            <Link href="/architecture" className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-zinc-600 bg-zinc-900/80 px-4 py-3.5 text-sm font-semibold text-zinc-200 no-underline transition hover:border-zinc-400 hover:bg-zinc-800 hover:text-white sm:flex-none sm:px-8 sm:py-4 sm:text-base">
+              {t.hero_cta_arch}
+            </Link>
+            <Link href="/timeline" className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-zinc-600 bg-zinc-900/80 px-4 py-3.5 text-sm font-semibold text-zinc-200 no-underline transition hover:border-zinc-400 hover:bg-zinc-800 hover:text-white sm:flex-none sm:px-8 sm:py-4 sm:text-base">
+              {t.hero_cta_timeline}
+            </Link>
+          </div>
         </motion.div>
       </section>
 

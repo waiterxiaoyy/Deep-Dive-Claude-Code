@@ -1,56 +1,107 @@
 {
   "version": "ch02",
-  "title": "查询引擎",
-  "description": "QueryEngine 的核心循环：用户输入 → API 调用 → 工具执行 → 结果回传，直到模型说 stop",
+  "title": {
+    "zh": "工具架构",
+    "en": "Tool Architecture"
+  },
+  "description": {
+    "zh": "QueryEngine 的核心循环：用户输入 → API 调用 → 工具执行 → 结果回传，直到模型说 stop",
+    "en": "QueryEngine core loop: user input → API call → tool execution → result return, until model says stop"
+  },
   "steps": [
     {
       "type": "user_message",
-      "content": "帮我修复 auth.ts 中的登录 bug",
-      "annotation": "用户输入请求，消息加入 messages[]"
+      "content": {
+        "zh": "帮我修复 auth.ts 中的登录 bug",
+        "en": "Help me fix the login bug in auth.ts"
+      },
+      "annotation": {
+        "zh": "用户输入请求，消息加入 messages[]",
+        "en": "User input request, message added to messages[]"
+      }
     },
     {
       "type": "system_event",
-      "content": "QueryEngine.run():\n  构建 system prompt (动态组装)\n  检查 token 预算 (200K 上限)\n  → 发送 API 请求",
-      "annotation": "QueryEngine 准备上下文，动态裁剪确保不超预算"
+      "content": {
+        "zh": "QueryEngine.run():\n  构建 system prompt (动态组装)\n  检查 token 预算 (200K 上限)\n  → 发送 API 请求",
+        "en": "QueryEngine.run():\n  Build system prompt (dynamic assembly)\n  Check token budget (200K limit)\n  → Send API request"
+      },
+      "annotation": {
+        "zh": "QueryEngine 准备上下文，动态裁剪确保不超预算",
+        "en": "QueryEngine prepares context, dynamic trimming ensures budget compliance"
+      }
     },
     {
       "type": "assistant_text",
-      "content": "让我先看一下 auth.ts 的内容...",
-      "annotation": "模型回复文本，stop_reason = 'tool_use'，循环继续"
+      "content": {
+        "zh": "让我先看一下 auth.ts 的内容...",
+        "en": "Let me first check the contents of auth.ts..."
+      },
+      "annotation": {
+        "zh": "模型回复文本，stop_reason = 'tool_use'，循环继续",
+        "en": "Model reply text, stop_reason = 'tool_use', loop continues"
+      }
     },
     {
       "type": "tool_call",
       "content": "{\n  \"tool\": \"FileRead\",\n  \"path\": \"src/auth.ts\"\n}",
       "toolName": "FileRead",
-      "annotation": "模型发起工具调用：读取文件"
+      "annotation": {
+        "zh": "模型发起工具调用：读取文件",
+        "en": "Model initiates tool call: read file"
+      }
     },
     {
       "type": "system_event",
-      "content": "权限检查:\n  FileRead → src/auth.ts\n  ✓ 在工作区内\n  ✓ 无敏感文件匹配\n  → 执行工具",
-      "annotation": "每个工具调用都经过权限引擎检查"
+      "content": {
+        "zh": "权限检查:\n  FileRead → src/auth.ts\n  ✓ 在工作区内\n  ✓ 无敏感文件匹配\n  → 执行工具",
+        "en": "Permission check:\n  FileRead → src/auth.ts\n  ✓ Within workspace\n  ✓ No sensitive file match\n  → Execute tool"
+      },
+      "annotation": {
+        "zh": "每个工具调用都经过权限引擎检查",
+        "en": "Every tool call goes through permission engine check"
+      }
     },
     {
       "type": "tool_result",
       "content": "export async function login(email, password) {\n  const user = await db.findUser(email);\n  if (user.password === password) { // BUG: 明文比较\n    return generateToken(user);\n  }\n}",
       "toolName": "FileRead",
-      "annotation": "工具结果追加到 messages[]，循环回到 API 调用"
+      "annotation": {
+        "zh": "工具结果追加到 messages[]，循环回到 API 调用",
+        "en": "Tool result appended to messages[], loop back to API call"
+      }
     },
     {
       "type": "tool_call",
       "content": "{\n  \"tool\": \"FileEdit\",\n  \"path\": \"src/auth.ts\",\n  \"old\": \"if (user.password === password)\",\n  \"new\": \"if (await bcrypt.compare(password, user.passwordHash))\"\n}",
       "toolName": "FileEdit",
-      "annotation": "模型决定编辑文件修复 bug"
+      "annotation": {
+        "zh": "模型决定编辑文件修复 bug",
+        "en": "Model decides to edit file to fix bug"
+      }
     },
     {
       "type": "tool_result",
-      "content": "✓ 文件已更新: src/auth.ts\n  - 替换了 1 处匹配",
+      "content": {
+        "zh": "✓ 文件已更新: src/auth.ts\n  - 替换了 1 处匹配",
+        "en": "✓ File updated: src/auth.ts\n  - Replaced 1 match"
+      },
       "toolName": "FileEdit",
-      "annotation": "编辑成功，结果回传"
+      "annotation": {
+        "zh": "编辑成功，结果回传",
+        "en": "Edit successful, result returned"
+      }
     },
     {
       "type": "assistant_text",
-      "content": "已修复！问题是密码使用了明文比较，现已改为 bcrypt.compare() 安全比对。",
-      "annotation": "stop_reason = 'end_turn'，循环退出，响应返回给用户"
+      "content": {
+        "zh": "已修复！问题是密码使用了明文比较，现已改为 bcrypt.compare() 安全比对。",
+        "en": "Fixed! The issue was plaintext password comparison, now changed to secure bcrypt.compare()."
+      },
+      "annotation": {
+        "zh": "stop_reason = 'end_turn'，循环退出，响应返回给用户",
+        "en": "stop_reason = 'end_turn', loop exits, response returned to user"
+      }
     }
   ]
 }

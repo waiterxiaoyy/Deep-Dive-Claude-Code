@@ -7,7 +7,7 @@
  * 3. 项目规则层 (CLAUDE.md 多级查找)
  * 4. 环境上下文层 (OS/Git/Model/CWD)
  *
- * 对应源码:
+ * Source: 
  *   src/constants/prompts.ts     → getSystemPrompt() (53KB)
  *   src/utils/claudemd.ts        → CLAUDE.md 解析 (45KB)
  *   src/utils/queryContext.ts     → fetchSystemPromptParts()

@@ -1,1 +1,92 @@
-{"version":"ch10","title":"多 Agent 协作","description":"Subagent / Teammate / Swarm 三层 Agent 协作模型","steps":[{"type":"user_message","content":"重构整个认证模块，包括代码、测试和文档","annotation":"超出单 Agent 能力的大型任务"},{"type":"system_event","content":"Main Agent 分析任务:\n  → 需要并行处理 3 个子任务\n  → 选择 Subagent 模式","annotation":"Main Agent 决定分发子任务"},{"type":"tool_call","content":"spawnAgent({\n  task: '分析 auth.ts 依赖图',\n  messages: [],  // 独立上下文\n})","toolName":"AgentTool","annotation":"Subagent: 隔离的 messages[] 不污染主对话"},{"type":"tool_result","content":"依赖分析完成:\n  auth.ts → session.ts → db.ts\n  共 5 个关联文件","toolName":"AgentTool","annotation":"Subagent 结果摘要返回 Main"},{"type":"system_event","content":"任务升级为 Teammate 模式:\n  Teammate A: 重写 auth.ts + session.ts\n  Teammate B: 更新所有测试文件\n  通信: 文件邮箱 /tmp/mailbox-*","annotation":"持久化队友，各自独立运行"},{"type":"system_event","content":"邮箱通信:\n  A → mailbox: '重写完成，接口变更: login(email, hash)'\n  B 读取邮箱 → 更新测试用例\n  B → mailbox: '15 个测试更新完成'","annotation":"Teammate 通过异步邮箱协调"},{"type":"assistant_text","content":"认证模块重构完成！\n- 重写了 auth.ts 和 session.ts\n- 更新了 15 个测试用例\n- 所有测试通过 ✓","annotation":"多 Agent 协作完成复杂任务"}]}
+{
+  "version": "ch10",
+  "title": {
+    "zh": "CLI传输层",
+    "en": "CLI Transport"
+  },
+  "description": {
+    "zh": "Subagent / Teammate / Swarm 三层 Agent 协作模型",
+    "en": "3-layer Agent collaboration model: Subagent / Teammate / Swarm"
+  },
+  "steps": [
+    {
+      "type": "user_message",
+      "content": {
+        "zh": "重构整个认证模块，包括代码、测试和文档",
+        "en": "Refactor entire auth module, including code, tests, and docs"
+      },
+      "annotation": {
+        "zh": "超出单 Agent 能力的大型任务",
+        "en": "Large task beyond single Agent capability"
+      }
+    },
+    {
+      "type": "system_event",
+      "content": {
+        "zh": "Main Agent 分析任务:\n  → 需要并行处理 3 个子任务\n  → 选择 Subagent 模式",
+        "en": "Main Agent analyzes task:\n  → Need to process 3 subtasks in parallel\n  → Choose Subagent mode"
+      },
+      "annotation": {
+        "zh": "Main Agent 决定分发子任务",
+        "en": "Main Agent decides to dispatch subtasks"
+      }
+    },
+    {
+      "type": "tool_call",
+      "content": {
+        "zh": "spawnAgent({\n  task: '分析 auth.ts 依赖图',\n  messages: [],  // 独立上下文\n})",
+        "en": "spawnAgent({\n  task: 'Analyze auth.ts dependency graph',\n  messages: [],  // Isolated context\n})"
+      },
+      "toolName": "AgentTool",
+      "annotation": {
+        "zh": "Subagent: 隔离的 messages[] 不污染主对话",
+        "en": "Subagent: Isolated messages[] doesn't pollute main conversation"
+      }
+    },
+    {
+      "type": "tool_result",
+      "content": {
+        "zh": "依赖分析完成:\n  auth.ts → session.ts → db.ts\n  共 5 个关联文件",
+        "en": "Dependency analysis complete:\n  auth.ts → session.ts → db.ts\n  Total 5 related files"
+      },
+      "toolName": "AgentTool",
+      "annotation": {
+        "zh": "Subagent 结果摘要返回 Main",
+        "en": "Subagent result summary returned to Main"
+      }
+    },
+    {
+      "type": "system_event",
+      "content": {
+        "zh": "任务升级为 Teammate 模式:\n  Teammate A: 重写 auth.ts + session.ts\n  Teammate B: 更新所有测试文件\n  通信: 文件邮箱 /tmp/mailbox-*",
+        "en": "Task upgraded to Teammate mode:\n  Teammate A: Rewrite auth.ts + session.ts\n  Teammate B: Update all test files\n  Communication: File mailbox /tmp/mailbox-*"
+      },
+      "annotation": {
+        "zh": "持久化队友，各自独立运行",
+        "en": "Persistent teammates, run independently"
+      }
+    },
+    {
+      "type": "system_event",
+      "content": {
+        "zh": "邮箱通信:\n  A → mailbox: '重写完成，接口变更: login(email, hash)'\n  B 读取邮箱 → 更新测试用例\n  B → mailbox: '15 个测试更新完成'",
+        "en": "Mailbox communication:\n  A → mailbox: 'Rewrite done, interface change: login(email, hash)'\n  B reads mailbox → Update test cases\n  B → mailbox: '15 tests updated'"
+      },
+      "annotation": {
+        "zh": "Teammate 通过异步邮箱协调",
+        "en": "Teammates coordinate via async mailbox"
+      }
+    },
+    {
+      "type": "assistant_text",
+      "content": {
+        "zh": "认证模块重构完成！\n- 重写了 auth.ts 和 session.ts\n- 更新了 15 个测试用例\n- 所有测试通过 ✓",
+        "en": "Auth module refactor complete!\n- Rewrote auth.ts and session.ts\n- Updated 15 test cases\n- All tests passed ✓"
+      },
+      "annotation": {
+        "zh": "多 Agent 协作完成复杂任务",
+        "en": "Multi-Agent collaboration completed complex task"
+      }
+    }
+  ]
+}

@@ -1,1 +1,97 @@
-{"version":"ch08","title":"MCP 协议","description":"MCP 客户端连接、工具发现、OAuth 认证和调用分发","steps":[{"type":"system_event","content":"MCP Client 初始化\n读取配置: ~/.claude/mcp.json","annotation":"启动时读取 MCP 配置"},{"type":"system_event","content":"连接 filesystem server:\n→ initialize { capabilities }\n← { tools: 3 }","annotation":"通过 stdio 连接本地 MCP Server"},{"type":"system_event","content":"连接 github server:\n→ OAuth2 认证\n← Authorization: Bearer <token>\n→ initialize\n← { tools: 3 }","annotation":"GitHub Server 需要 OAuth 认证"},{"type":"user_message","content":"帮我在 GitHub 上创建一个 PR","annotation":"用户请求触发 MCP 工具调用"},{"type":"tool_call","content":"{ tool: 'github.createPR',\n  input: { title: 'Fix auth bug', branch: 'fix/login' } }","toolName":"github.createPR","annotation":"模型调用 MCP 工具"},{"type":"system_event","content":"MCP 分发:\n  tool: 'github.createPR'\n  → 路由到 server: 'github'\n  → tools/call { name: 'createPR', args }","annotation":"MCP Client 将调用转发到对应 Server"},{"type":"tool_result","content":"PR #42 created: https://github.com/user/repo/pull/42","toolName":"github.createPR","annotation":"MCP Server 执行并返回结果"},{"type":"assistant_text","content":"已创建 PR #42，链接: https://github.com/user/repo/pull/42","annotation":"结果返回给用户"}]}
+{
+  "version": "ch08",
+  "title": {
+    "zh": "插件生态",
+    "en": "Plugin Ecosystem"
+  },
+  "description": {
+    "zh": "MCP 客户端连接、工具发现、OAuth 认证和调用分发",
+    "en": "MCP client connection, tool discovery, OAuth auth, and call dispatch"
+  },
+  "steps": [
+    {
+      "type": "system_event",
+      "content": {
+        "zh": "MCP Client 初始化\n读取配置: ~/.claude/mcp.json",
+        "en": "MCP Client initialization\nRead config: ~/.claude/mcp.json"
+      },
+      "annotation": {
+        "zh": "启动时读取 MCP 配置",
+        "en": "Read MCP config on startup"
+      }
+    },
+    {
+      "type": "system_event",
+      "content": {
+        "zh": "连接 filesystem server:\n→ initialize { capabilities }\n← { tools: 3 }",
+        "en": "Connect to filesystem server:\n→ initialize { capabilities }\n← { tools: 3 }"
+      },
+      "annotation": {
+        "zh": "通过 stdio 连接本地 MCP Server",
+        "en": "Connect to local MCP Server via stdio"
+      }
+    },
+    {
+      "type": "system_event",
+      "content": {
+        "zh": "连接 github server:\n→ OAuth2 认证\n← Authorization: Bearer <token>\n→ initialize\n← { tools: 3 }",
+        "en": "Connect to github server:\n→ OAuth2 authentication\n← Authorization: Bearer <token>\n→ initialize\n← { tools: 3 }"
+      },
+      "annotation": {
+        "zh": "GitHub Server 需要 OAuth 认证",
+        "en": "GitHub Server requires OAuth authentication"
+      }
+    },
+    {
+      "type": "user_message",
+      "content": {
+        "zh": "帮我在 GitHub 上创建一个 PR",
+        "en": "Help me create a PR on GitHub"
+      },
+      "annotation": {
+        "zh": "用户请求触发 MCP 工具调用",
+        "en": "User request triggers MCP tool call"
+      }
+    },
+    {
+      "type": "tool_call",
+      "content": "{ tool: 'github.createPR',\n  input: { title: 'Fix auth bug', branch: 'fix/login' } }",
+      "toolName": "github.createPR",
+      "annotation": {
+        "zh": "模型调用 MCP 工具",
+        "en": "Model calls MCP tool"
+      }
+    },
+    {
+      "type": "system_event",
+      "content": {
+        "zh": "MCP 分发:\n  tool: 'github.createPR'\n  → 路由到 server: 'github'\n  → tools/call { name: 'createPR', args }",
+        "en": "MCP dispatch:\n  tool: 'github.createPR'\n  → Route to server: 'github'\n  → tools/call { name: 'createPR', args }"
+      },
+      "annotation": {
+        "zh": "MCP Client 将调用转发到对应 Server",
+        "en": "MCP Client forwards call to corresponding Server"
+      }
+    },
+    {
+      "type": "tool_result",
+      "content": "PR #42 created: https://github.com/user/repo/pull/42",
+      "toolName": "github.createPR",
+      "annotation": {
+        "zh": "MCP Server 执行并返回结果",
+        "en": "MCP Server executes and returns result"
+      }
+    },
+    {
+      "type": "assistant_text",
+      "content": {
+        "zh": "已创建 PR #42，链接: https://github.com/user/repo/pull/42",
+        "en": "Created PR #42, link: https://github.com/user/repo/pull/42"
+      },
+      "annotation": {
+        "zh": "结果返回给用户",
+        "en": "Result returned to user"
+      }
+    }
+  ]
+}

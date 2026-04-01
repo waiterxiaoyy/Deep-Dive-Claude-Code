@@ -29,6 +29,7 @@ const CHAPTER_FILES = {
 
 const docs = [];
 
+// 处理中文文档
 for (const [version, filename] of Object.entries(CHAPTER_FILES)) {
   try {
     const content = readFileSync(join(docsDir, filename), 'utf-8');
@@ -38,5 +39,15 @@ for (const [version, filename] of Object.entries(CHAPTER_FILES)) {
   }
 }
 
+// 处理英文文档
+for (const [version, filename] of Object.entries(CHAPTER_FILES)) {
+  try {
+    const content = readFileSync(join(docsDir, 'en', filename), 'utf-8');
+    docs.push({ version, locale: 'en', content });
+  } catch (e) {
+    console.warn(`Warning: docs/en/${filename} not found, skipping`);
+  }
+}
+
 writeFileSync(join(outDir, 'docs.json'), JSON.stringify(docs, null, 2));
-console.log(`Built ${docs.length} docs → src/data/generated/docs.json`);
+console.log(`Built ${docs.length} docs (zh: ${docs.filter(d => d.locale === 'zh').length}, en: ${docs.filter(d => d.locale === 'en').length}) → src/data/generated/docs.json`);

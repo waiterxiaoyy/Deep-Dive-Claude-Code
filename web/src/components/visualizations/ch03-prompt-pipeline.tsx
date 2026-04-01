@@ -3,21 +3,23 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useSteppedVisualization } from "@/hooks/useSteppedVisualization";
 import { StepControls } from "@/components/visualizations/shared/step-controls";
+import { getLocalizedText, type LocalizedText } from "@/lib/i18n";
+import { useLocale } from "@/lib/locale-context";
 
 // 4 层 Prompt 管线
 interface PipelineLayer {
   id: string;
-  label: string;
-  desc: string;
+  label: LocalizedText;
+  desc: LocalizedText;
   color: string;
   tokens: string;
 }
 
 const LAYERS: PipelineLayer[] = [
-  { id: "base", label: "L1: 基础身份", desc: "你是 Claude，一个 AI 编程助手...", color: "bg-blue-600", tokens: "~2K" },
-  { id: "tools", label: "L2: 工具定义", desc: "50+ 工具 Schema (FileRead, BashTool, ...)", color: "bg-emerald-600", tokens: "~15K" },
-  { id: "claudemd", label: "L3: CLAUDE.md", desc: "项目配置: 代码风格、约定、自定义规则", color: "bg-purple-600", tokens: "~5K" },
-  { id: "context", label: "L4: 动态上下文", desc: "打开的文件、git 状态、LSP 诊断", color: "bg-amber-600", tokens: "~8K" },
+  { id: "base", label: { zh: "L1: 基础身份", en: "L1: Base Identity" }, desc: { zh: "你是 Claude，一个 AI 编程助手...", en: "You are Claude, an AI programming assistant..." }, color: "bg-blue-600", tokens: "~2K" },
+  { id: "tools", label: { zh: "L2: 工具定义", en: "L2: Tool Definitions" }, desc: { zh: "50+ 工具 Schema (FileRead, BashTool, ...)", en: "50+ tool schemas (FileRead, BashTool, ...)" }, color: "bg-emerald-600", tokens: "~15K" },
+  { id: "claudemd", label: { zh: "L3: CLAUDE.md", en: "L3: CLAUDE.md" }, desc: { zh: "项目配置: 代码风格、约定、自定义规则", en: "Project config: code style, conventions, custom rules" }, color: "bg-purple-600", tokens: "~5K" },
+  { id: "context", label: { zh: "L4: 动态上下文", en: "L4: Dynamic Context" }, desc: { zh: "打开的文件、git 状态、LSP 诊断", en: "Open files, git status, LSP diagnostics" }, color: "bg-amber-600", tokens: "~8K" },
 ];
 
 // 每步展示哪些层 + 输出
@@ -31,33 +33,36 @@ const CLAUDEMD_SEARCH = [
   "~/project/src/CLAUDE.md",
 ];
 
-const OUTPUT_PER_STEP: string[] = [
-  "",
-  "identity: \"You are Claude, an AI assistant...\"",
-  "tools: [FileRead, FileEdit, BashTool, ...]\n  schemas: 50+ JSON Schema definitions",
-  "CLAUDE.md found at: ~/project/CLAUDE.md\n  rules: [\"Use TypeScript strict mode\",\n          \"Run tests before commit\",\n          \"Prefer functional style\"]",
-  "context: {\n  openFiles: [\"auth.ts\", \"index.ts\"],\n  gitBranch: \"fix/login-bug\",\n  diagnostics: 2 errors, 1 warning\n}",
-  "// 最终组装\nsystemPrompt = [\n  baseIdentity,     // 2K tokens\n  toolDefinitions,  // 15K tokens\n  claudeMdRules,    // 5K tokens\n  dynamicContext,   // 8K tokens\n].join('\\n');      // 总计 ~30K",
-  "// Token 预算裁剪\nif (totalTokens > budget) {\n  // 优先保留: L1 > L2 > L3 > L4\n  trimDynamicContext();\n  if (still > budget) truncateClaudeMd();\n}",
+const OUTPUT_PER_STEP: LocalizedText[] = [
+  { zh: "", en: "" },
+  { zh: "identity: \"You are Claude, an AI assistant...\"", en: "identity: \"You are Claude, an AI assistant...\"" },
+  { zh: "tools: [FileRead, FileEdit, BashTool, ...]\n  schemas: 50+ JSON Schema definitions", en: "tools: [FileRead, FileEdit, BashTool, ...]\n  schemas: 50+ JSON Schema definitions" },
+  { zh: "CLAUDE.md found at: ~/project/CLAUDE.md\n  rules: [\"Use TypeScript strict mode\",\n          \"Run tests before commit\",\n          \"Prefer functional style\"]", en: "CLAUDE.md found at: ~/project/CLAUDE.md\n  rules: [\"Use TypeScript strict mode\",\n          \"Run tests before commit\",\n          \"Prefer functional style\"]" },
+  { zh: "context: {\n  openFiles: [\"auth.ts\", \"index.ts\"],\n  gitBranch: \"fix/login-bug\",\n  diagnostics: 2 errors, 1 warning\n}", en: "context: {\n  openFiles: [\"auth.ts\", \"index.ts\"],\n  gitBranch: \"fix/login-bug\",\n  diagnostics: 2 errors, 1 warning\n}" },
+  { zh: "// 最终组装\nsystemPrompt = [\n  baseIdentity,     // 2K tokens\n  toolDefinitions,  // 15K tokens\n  claudeMdRules,    // 5K tokens\n  dynamicContext,   // 8K tokens\n].join('\\n');      // 总计 ~30K", en: "// Final assembly\nsystemPrompt = [\n  baseIdentity,     // 2K tokens\n  toolDefinitions,  // 15K tokens\n  claudeMdRules,    // 5K tokens\n  dynamicContext,   // 8K tokens\n].join('\\n');      // Total ~30K" },
+  { zh: "// Token 预算裁剪\nif (totalTokens > budget) {\n  // 优先保留: L1 > L2 > L3 > L4\n  trimDynamicContext();\n  if (still > budget) truncateClaudeMd();\n}", en: "// Token budget trimming\nif (totalTokens > budget) {\n  // Priority: L1 > L2 > L3 > L4\n  trimDynamicContext();\n  if (still > budget) truncateClaudeMd();\n}" },
 ];
 
 const STEP_INFO = [
-  { title: "Prompt 组装管线", desc: "System Prompt 不是一个字符串，而是 4 层动态组装的管线" },
-  { title: "L1: 基础身份", desc: "定义 Claude 的角色和核心行为规范，约 2K tokens" },
-  { title: "L2: 工具定义", desc: "50+ 工具的 JSON Schema 注入，让模型知道可以用什么工具" },
-  { title: "L3: CLAUDE.md 配置", desc: "从项目目录逐级向上搜索 CLAUDE.md，注入项目级规则" },
-  { title: "L4: 动态上下文", desc: "注入当前打开的文件、git 状态、LSP 诊断信息" },
-  { title: "最终组装", desc: "4 层内容拼接成完整 System Prompt，约 30K tokens" },
-  { title: "预算裁剪", desc: "如果超出 Token 预算，按优先级从 L4 → L3 逐步裁剪" },
+  { title: { zh: "Prompt 组装管线", en: "Prompt Assembly Pipeline" }, desc: { zh: "System Prompt 不是一个字符串，而是 4 层动态组装的管线", en: "System Prompt is not a string, but a 4-layer dynamically assembled pipeline" } },
+  { title: { zh: "L1: 基础身份", en: "L1: Base Identity" }, desc: { zh: "定义 Claude 的角色和核心行为规范，约 2K tokens", en: "Define Claude's role and core behavioral norms, ~2K tokens" } },
+  { title: { zh: "L2: 工具定义", en: "L2: Tool Definitions" }, desc: { zh: "50+ 工具的 JSON Schema 注入，让模型知道可以用什么工具", en: "Inject JSON schemas for 50+ tools, let the model know available tools" } },
+  { title: { zh: "L3: CLAUDE.md 配置", en: "L3: CLAUDE.md Config" }, desc: { zh: "从项目目录逐级向上搜索 CLAUDE.md，注入项目级规则", en: "Search for CLAUDE.md upward from project directory, inject project-level rules" } },
+  { title: { zh: "L4: 动态上下文", en: "L4: Dynamic Context" }, desc: { zh: "注入当前打开的文件、git 状态、LSP 诊断信息", en: "Inject currently open files, git status, LSP diagnostics" } },
+  { title: { zh: "最终组装", en: "Final Assembly" }, desc: { zh: "4 层内容拼接成完整 System Prompt，约 30K tokens", en: "4 layers concatenated into complete System Prompt, ~30K tokens" } },
+  { title: { zh: "预算裁剪", en: "Budget Trimming" }, desc: { zh: "如果超出 Token 预算，按优先级从 L4 → L3 逐步裁剪", en: "If exceeds token budget, trim progressively from L4 → L3 by priority" } },
 ];
 
 export default function PromptPipelineVisualization() {
+  const { locale } = useLocale();
   const viz = useSteppedVisualization({ totalSteps: 7, autoPlayInterval: 2500 });
   const visibleCount = VISIBLE_LAYERS_PER_STEP[viz.currentStep];
 
   return (
     <section className="min-h-[520px] space-y-4">
-      <h2 className="text-xl font-semibold text-zinc-100">Prompt 组装管线</h2>
+      <h2 className="text-xl font-semibold text-zinc-100">
+        {locale === "zh" ? "Prompt 组装管线" : "Prompt Assembly Pipeline"}
+      </h2>
 
       <div className="rounded-lg border border-zinc-700 bg-zinc-900 p-4">
         <div className="flex flex-col gap-4 lg:flex-row">
@@ -85,13 +90,13 @@ export default function PromptPipelineVisualization() {
                       <div className="flex items-center gap-2">
                         <span className={`h-3 w-3 rounded-full ${layer.color}`} />
                         <span className={`text-sm font-semibold ${isVisible ? "text-zinc-100" : "text-zinc-600"}`}>
-                          {layer.label}
+                          {getLocalizedText(layer.label, locale)}
                         </span>
                       </div>
                       <span className="font-mono text-[10px] text-zinc-500">{layer.tokens}</span>
                     </div>
                     <p className={`mt-1 text-xs ${isVisible ? "text-zinc-400" : "text-zinc-700"}`}>
-                      {layer.desc}
+                      {getLocalizedText(layer.desc, locale)}
                     </p>
 
                     {/* CLAUDE.md 搜索路径 */}
@@ -122,7 +127,9 @@ export default function PromptPipelineVisualization() {
                   animate={{ opacity: 1 }}
                   className="flex items-center justify-between rounded-lg border border-zinc-700 bg-zinc-950 p-3"
                 >
-                  <span className="text-xs text-zinc-400">Total System Prompt</span>
+                  <span className="text-xs text-zinc-400">
+                    {locale === "zh" ? "System Prompt 总计" : "Total System Prompt"}
+                  </span>
                   <span className="font-mono text-sm font-bold text-white">~30K tokens</span>
                 </motion.div>
               )}
@@ -131,10 +138,12 @@ export default function PromptPipelineVisualization() {
 
           {/* 右侧：输出 */}
           <div className="w-full lg:w-[50%]">
-            <div className="mb-2 font-mono text-xs text-zinc-500">组装输出</div>
+            <div className="mb-2 font-mono text-xs text-zinc-500">
+              {locale === "zh" ? "组装输出" : "Assembly Output"}
+            </div>
             <div className="min-h-[360px] rounded-md border border-zinc-800 bg-zinc-950 p-3">
               <AnimatePresence mode="wait">
-                {OUTPUT_PER_STEP[viz.currentStep] ? (
+                {getLocalizedText(OUTPUT_PER_STEP[viz.currentStep], locale) ? (
                   <motion.pre
                     key={viz.currentStep}
                     initial={{ opacity: 0 }}
@@ -142,14 +151,14 @@ export default function PromptPipelineVisualization() {
                     exit={{ opacity: 0 }}
                     className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-zinc-300"
                   >
-                    {OUTPUT_PER_STEP[viz.currentStep]}
+                    {getLocalizedText(OUTPUT_PER_STEP[viz.currentStep], locale)}
                   </motion.pre>
                 ) : (
                   <motion.div
                     key="empty"
                     className="flex h-full min-h-[300px] items-center justify-center text-xs text-zinc-600"
                   >
-                    点击播放查看组装过程
+                    {locale === "zh" ? "点击播放查看组装过程" : "Click play to view assembly process"}
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -162,8 +171,8 @@ export default function PromptPipelineVisualization() {
         currentStep={viz.currentStep} totalSteps={viz.totalSteps}
         onPrev={viz.prev} onNext={viz.next} onReset={viz.reset}
         isPlaying={viz.isPlaying} onToggleAutoPlay={viz.toggleAutoPlay}
-        stepTitle={STEP_INFO[viz.currentStep].title}
-        stepDescription={STEP_INFO[viz.currentStep].desc}
+        stepTitle={getLocalizedText(STEP_INFO[viz.currentStep].title, locale)}
+        stepDescription={getLocalizedText(STEP_INFO[viz.currentStep].desc, locale)}
       />
     </section>
   );

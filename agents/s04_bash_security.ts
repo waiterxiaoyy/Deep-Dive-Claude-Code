@@ -7,7 +7,7 @@
  * 3. 路径沙箱验证
  * 4. AI 辅助分类器 (yoloClassifier 模拟)
  *
- * 对应源码:
+ * Source: 
  *   src/tools/BashTool/bashSecurity.ts     (100KB) — 安全分类
  *   src/tools/BashTool/bashPermissions.ts  (96KB)  — 权限判定
  *   src/tools/BashTool/readOnlyValidation.ts (67KB) — 只读验证

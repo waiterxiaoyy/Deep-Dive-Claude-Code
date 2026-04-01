@@ -7,7 +7,7 @@
  * 3. 并行预取（利用 import 求值时间做 I/O）
  * 4. 动态 import 避免不必要模块加载
  *
- * 对应源码:
+ * Source: 
  *   src/dev-entry.ts          → 缺失导入检查
  *   src/entrypoints/cli.tsx   → 快速路径分发
  *   src/main.tsx:1-66         → 并行预取

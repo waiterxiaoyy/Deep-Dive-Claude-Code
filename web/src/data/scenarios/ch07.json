@@ -1,1 +1,90 @@
-{"version":"ch07","title":"上下文管理","description":"三层压缩策略：微压缩 → 自动压缩 → 做梦整合，实现无限会话","steps":[{"type":"user_message","content":"帮我重构整个认证模块，包括所有相关文件","annotation":"大型任务，会产生大量上下文"},{"type":"system_event","content":"Token 使用: 80K / 200K (40%)\n  对话历史: 35K\n  工具结果: 15K\n  System Prompt: 30K","annotation":"任务开始，上下文正常"},{"type":"system_event","content":"Token 使用: 185K / 200K (92%) ⚠\n  对话历史: 70K\n  工具结果: 50K\n  文件内容: 35K","annotation":"多轮工具调用后，上下文接近上限"},{"type":"system_event","content":"触发 L1: 微压缩\n  工具结果 50K → 25K (截断中间内容)\n  文件内容 35K → 20K (保留头尾)\n\n  释放: 40K tokens\n  当前: 145K / 200K (72%)","annotation":"截断大型工具结果，保留关键信息"},{"type":"system_event","content":"触发 L2: 自动压缩\n  调用模型总结历史对话:\n  \"用户要求重构认证模块，已完成:\n   1. 分析了依赖图\n   2. 重写了 auth.ts\n   待完成: 更新测试\"\n\n  70K 历史 → 25K 摘要\n  当前: 80K / 200K (40%)","annotation":"模型总结历史，大幅释放空间"},{"type":"system_event","content":"后台 L3: 做梦整合\n  提取关键记忆:\n  - \"用户偏好 bcrypt 而非 MD5\"\n  - \"项目使用 TypeScript strict\"\n  → 写入 SessionMemory","annotation":"异步提取关键信息，注入后续对话"},{"type":"assistant_text","content":"认证模块重构进展顺利，接下来更新测试文件...","annotation":"压缩完成，对话继续，用户无感知"}]}
+{
+  "version": "ch07",
+  "title": {
+    "zh": "MCP协议",
+    "en": "MCP Protocol"
+  },
+  "description": {
+    "zh": "三层压缩策略：微压缩 → 自动压缩 → 做梦整合，实现无限会话",
+    "en": "3-layer compression strategy: micro-compression → auto-compression → dream integration, achieving unlimited sessions"
+  },
+  "steps": [
+    {
+      "type": "user_message",
+      "content": {
+        "zh": "帮我重构整个认证模块，包括所有相关文件",
+        "en": "Help me refactor the entire auth module, including all related files"
+      },
+      "annotation": {
+        "zh": "大型任务，会产生大量上下文",
+        "en": "Large task, will generate lots of context"
+      }
+    },
+    {
+      "type": "system_event",
+      "content": {
+        "zh": "Token 使用: 80K / 200K (40%)\n  对话历史: 35K\n  工具结果: 15K\n  System Prompt: 30K",
+        "en": "Token usage: 80K / 200K (40%)\n  Conversation history: 35K\n  Tool results: 15K\n  System Prompt: 30K"
+      },
+      "annotation": {
+        "zh": "任务开始，上下文正常",
+        "en": "Task started, context normal"
+      }
+    },
+    {
+      "type": "system_event",
+      "content": {
+        "zh": "Token 使用: 185K / 200K (92%) ⚠\n  对话历史: 70K\n  工具结果: 50K\n  文件内容: 35K",
+        "en": "Token usage: 185K / 200K (92%) ⚠\n  Conversation history: 70K\n  Tool results: 50K\n  File contents: 35K"
+      },
+      "annotation": {
+        "zh": "多轮工具调用后，上下文接近上限",
+        "en": "After multiple tool calls, context approaching limit"
+      }
+    },
+    {
+      "type": "system_event",
+      "content": {
+        "zh": "触发 L1: 微压缩\n  工具结果 50K → 25K (截断中间内容)\n  文件内容 35K → 20K (保留头尾)\n\n  释放: 40K tokens\n  当前: 145K / 200K (72%)",
+        "en": "Trigger L1: Micro-compression\n  Tool results 50K → 25K (truncate middle)\n  File contents 35K → 20K (keep head/tail)\n\n  Released: 40K tokens\n  Current: 145K / 200K (72%)"
+      },
+      "annotation": {
+        "zh": "截断大型工具结果，保留关键信息",
+        "en": "Truncate large tool results, keep key info"
+      }
+    },
+    {
+      "type": "system_event",
+      "content": {
+        "zh": "触发 L2: 自动压缩\n  调用模型总结历史对话:\n  \"用户要求重构认证模块，已完成:\n   1. 分析了依赖图\n   2. 重写了 auth.ts\n   待完成: 更新测试\"\n\n  70K 历史 → 25K 摘要\n  当前: 80K / 200K (40%)",
+        "en": "Trigger L2: Auto-compression\n  Call model to summarize history:\n  \"User requested auth module refactor, completed:\n   1. Analyzed dependency graph\n   2. Rewrote auth.ts\n   TODO: Update tests\"\n\n  70K history → 25K summary\n  Current: 80K / 200K (40%)"
+      },
+      "annotation": {
+        "zh": "模型总结历史，大幅释放空间",
+        "en": "Model summarizes history, significantly frees space"
+      }
+    },
+    {
+      "type": "system_event",
+      "content": {
+        "zh": "后台 L3: 做梦整合\n  提取关键记忆:\n  - \"用户偏好 bcrypt 而非 MD5\"\n  - \"项目使用 TypeScript strict\"\n  → 写入 SessionMemory",
+        "en": "Background L3: Dream integration\n  Extract key memories:\n  - \"User prefers bcrypt over MD5\"\n  - \"Project uses TypeScript strict\"\n  → Write to SessionMemory"
+      },
+      "annotation": {
+        "zh": "异步提取关键信息，注入后续对话",
+        "en": "Async extract key info, inject into subsequent conversations"
+      }
+    },
+    {
+      "type": "assistant_text",
+      "content": {
+        "zh": "认证模块重构进展顺利，接下来更新测试文件...",
+        "en": "Auth module refactor progressing well, next updating test files..."
+      },
+      "annotation": {
+        "zh": "压缩完成，对话继续，用户无感知",
+        "en": "Compression done, conversation continues, user unaware"
+      }
+    }
+  ]
+}

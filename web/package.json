@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --port 3200",
+    "dev": "next dev --port 3200 --hostname 0.0.0.0",
     "build": "node scripts/build-docs.mjs && node scripts/build-sources.mjs && next build",
     "build:docs": "node scripts/build-docs.mjs",
     "build:sources": "node scripts/build-sources.mjs",

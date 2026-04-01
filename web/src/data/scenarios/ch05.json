@@ -1,62 +1,116 @@
 {
   "version": "ch05",
-  "title": "Shell 安全",
-  "description": "BashTool 的 7 层安全分类引擎：每条命令经过解析 → 模式匹配 → 路径验证 → AI 分类，决定是否执行",
+  "title": {
+    "zh": "文件操作与权限",
+    "en": "File Operations & Permissions"
+  },
+  "description": {
+    "zh": "BashTool 的 7 层安全分类引擎：每条命令经过解析 → 模式匹配 → 路径验证 → AI 分类，决定是否执行",
+    "en": "BashTool's 7-layer security classification engine: each command goes through parse → pattern match → path validation → AI classification"
+  },
   "steps": [
     {
       "type": "user_message",
-      "content": "帮我清理 build 产物和临时文件",
-      "annotation": "用户请求涉及文件删除操作"
+      "content": {
+        "zh": "帮我清理 build 产物和临时文件",
+        "en": "Help me clean up build artifacts and temp files"
+      },
+      "annotation": {
+        "zh": "用户请求涉及文件删除操作",
+        "en": "User request involves file deletion"
+      }
     },
     {
       "type": "tool_call",
       "content": "ls -la build/",
       "toolName": "BashTool",
-      "annotation": "模型先查看 build 目录内容"
+      "annotation": {
+        "zh": "模型先查看 build 目录内容",
+        "en": "Model first checks build directory contents"
+      }
     },
     {
       "type": "system_event",
-      "content": "安全分类 Layer 1 — 命令解析:\n  command: 'ls'\n  args: ['-la', 'build/']\n  → 已知只读命令\n  → 分类: SAFE ✓\n  → 自动批准执行",
-      "annotation": "ls 是白名单只读命令，跳过后续层直接执行"
+      "content": {
+        "zh": "安全分类 Layer 1 — 命令解析:\n  command: 'ls'\n  args: ['-la', 'build/']\n  → 已知只读命令\n  → 分类: SAFE ✓\n  → 自动批准执行",
+        "en": "Security classification Layer 1 — Command parsing:\n  command: 'ls'\n  args: ['-la', 'build/']\n  → Known read-only command\n  → Classification: SAFE ✓\n  → Auto-approved execution"
+      },
+      "annotation": {
+        "zh": "ls 是白名单只读命令，跳过后续层直接执行",
+        "en": "ls is whitelisted read-only, skip remaining layers and execute"
+      }
     },
     {
       "type": "tool_result",
       "content": "total 24\ndrwxr-xr-x  4 user  staff  128 Mar 30 10:00 .\n-rw-r--r--  1 user  staff  8192 Mar 30 09:55 bundle.js\n-rw-r--r--  1 user  staff  4096 Mar 30 09:55 bundle.css",
       "toolName": "BashTool",
-      "annotation": "只读命令执行结果"
+      "annotation": {
+        "zh": "只读命令执行结果",
+        "en": "Read-only command execution result"
+      }
     },
     {
       "type": "tool_call",
       "content": "rm -rf build/ && rm -rf /tmp/claude-*",
       "toolName": "BashTool",
-      "annotation": "模型生成删除命令"
+      "annotation": {
+        "zh": "模型生成删除命令",
+        "en": "Model generates delete command"
+      }
     },
     {
       "type": "system_event",
-      "content": "安全分类 Layer 1 — 命令解析:\n  commands: ['rm -rf build/', 'rm -rf /tmp/claude-*']\n  → 包含 rm -rf，进入深度检查\n\nLayer 2 — 模式匹配:\n  'rm -rf' → 危险模式命中\n  → 分类: DANGEROUS\n\nLayer 3 — 路径验证:\n  'build/' → ✓ 在工作区内\n  '/tmp/claude-*' → ✗ 超出工作区范围!\n\nLayer 4 — 最终判定:\n  → 拒绝: 路径超出沙箱范围",
-      "annotation": "多层验证：命令本身危险 + 路径超出沙箱 = 拒绝执行"
+      "content": {
+        "zh": "安全分类 Layer 1 — 命令解析:\n  commands: ['rm -rf build/', 'rm -rf /tmp/claude-*']\n  → 包含 rm -rf，进入深度检查\n\nLayer 2 — 模式匹配:\n  'rm -rf' → 危险模式命中\n  → 分类: DANGEROUS\n\nLayer 3 — 路径验证:\n  'build/' → ✓ 在工作区内\n  '/tmp/claude-*' → ✗ 超出工作区范围!\n\nLayer 4 — 最终判定:\n  → 拒绝: 路径超出沙箱范围",
+        "en": "Security classification Layer 1 — Command parsing:\n  commands: ['rm -rf build/', 'rm -rf /tmp/claude-*']\n  → Contains rm -rf, enter deep check\n\nLayer 2 — Pattern matching:\n  'rm -rf' → Dangerous pattern hit\n  → Classification: DANGEROUS\n\nLayer 3 — Path validation:\n  'build/' → ✓ Within workspace\n  '/tmp/claude-*' → ✗ Outside workspace!\n\nLayer 4 — Final verdict:\n  → Reject: Path outside sandbox"
+      },
+      "annotation": {
+        "zh": "多层验证：命令本身危险 + 路径超出沙箱 = 拒绝执行",
+        "en": "Multi-layer validation: dangerous command + path outside sandbox = reject"
+      }
     },
     {
       "type": "system_event",
-      "content": "⚠ 命令被拒绝:\n  原因: rm -rf 操作目标包含工作区外路径 /tmp/claude-*\n  建议: 只删除工作区内的 build/ 目录",
-      "annotation": "安全引擎返回详细拒绝原因和修复建议"
+      "content": {
+        "zh": "⚠ 命令被拒绝:\n  原因: rm -rf 操作目标包含工作区外路径 /tmp/claude-*\n  建议: 只删除工作区内的 build/ 目录",
+        "en": "⚠ Command rejected:\n  Reason: rm -rf target includes path /tmp/claude-* outside workspace\n  Suggestion: Only delete build/ directory within workspace"
+      },
+      "annotation": {
+        "zh": "安全引擎返回详细拒绝原因和修复建议",
+        "en": "Security engine returns detailed rejection reason and fix suggestion"
+      }
     },
     {
       "type": "tool_call",
       "content": "rm -rf build/",
       "toolName": "BashTool",
-      "annotation": "模型修正命令，仅删除工作区内文件"
+      "annotation": {
+        "zh": "模型修正命令，仅删除工作区内文件",
+        "en": "Model corrects command, only delete files within workspace"
+      }
     },
     {
       "type": "system_event",
-      "content": "安全分类:\n  Layer 1: rm -rf → 危险模式\n  Layer 2: 路径 'build/' → ✓ 工作区内\n  Layer 3: 无敏感文件匹配\n  → 分类: NEEDS_APPROVAL\n  → 询问用户确认",
-      "annotation": "工作区内的 rm -rf 不自动执行，而是请求用户批准"
+      "content": {
+        "zh": "安全分类:\n  Layer 1: rm -rf → 危险模式\n  Layer 2: 路径 'build/' → ✓ 工作区内\n  Layer 3: 无敏感文件匹配\n  → 分类: NEEDS_APPROVAL\n  → 询问用户确认",
+        "en": "Security classification:\n  Layer 1: rm -rf → Dangerous pattern\n  Layer 2: Path 'build/' → ✓ Within workspace\n  Layer 3: No sensitive file match\n  → Classification: NEEDS_APPROVAL\n  → Ask user for confirmation"
+      },
+      "annotation": {
+        "zh": "工作区内的 rm -rf 不自动执行，而是请求用户批准",
+        "en": "rm -rf within workspace not auto-executed, request user approval"
+      }
     },
     {
       "type": "tool_result",
-      "content": "✓ 用户批准\n✓ 已删除 build/ 目录",
+      "content": {
+        "zh": "✓ 用户批准\n✓ 已删除 build/ 目录",
+        "en": "✓ User approved\n✓ build/ directory deleted"
+      },
       "toolName": "BashTool",
-      "annotation": "用户确认后执行，完成安全的文件清理"
+      "annotation": {
+        "zh": "用户确认后执行，完成安全的文件清理",
+        "en": "Execute after user confirmation, safe file cleanup completed"
+      }
     }
   ]
 }

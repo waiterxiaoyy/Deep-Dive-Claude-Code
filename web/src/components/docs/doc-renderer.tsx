@@ -9,6 +9,8 @@ import remarkRehype from "remark-rehype";
 import rehypeRaw from "rehype-raw";
 import rehypeHighlight from "rehype-highlight";
 import rehypeStringify from "rehype-stringify";
+import { useLocale } from "@/lib/locale-context";
+import { UI_TEXT } from "@/lib/i18n";
 
 interface DocRendererProps {
   version: string;
@@ -55,11 +57,14 @@ function postProcessHtml(html: string): string {
 }
 
 export function DocRenderer({ version }: DocRendererProps) {
+  const { locale } = useLocale();
+  const t = UI_TEXT[locale];
+  
   const doc = useMemo(() => {
     return (docsData as { version: string; locale: string; content: string }[]).find(
-      (d) => d.version === version
+      (d) => d.version === version && d.locale === locale
     );
-  }, [version]);
+  }, [version, locale]);
 
   const html = useMemo(() => {
     if (!doc) return "";
@@ -70,7 +75,7 @@ export function DocRenderer({ version }: DocRendererProps) {
   if (!doc) {
     return (
       <div className="flex h-64 items-center justify-center text-sm text-zinc-500">
-        该章节暂无文档
+        {t.chapter_code_wip}
       </div>
     );
   }

@@ -6,6 +6,8 @@ import { useSimulator } from "@/hooks/useSimulator";
 import { SimulatorControls } from "./simulator-controls";
 import { SimulatorMessage } from "./simulator-message";
 import type { Scenario } from "@/types/agent-data";
+import { getLocalizedText, UI_TEXT } from "@/lib/i18n";
+import { useLocale } from "@/lib/locale-context";
 
 // 新章节 → 旧场景文件映射
 const scenarioModules: Record<string, () => Promise<{ default: Scenario }>> = {
@@ -31,6 +33,8 @@ interface AgentLoopSimulatorProps {
 export function AgentLoopSimulator({ chapterId }: AgentLoopSimulatorProps) {
   const [scenario, setScenario] = useState<Scenario | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const { locale } = useLocale();
+  const t = UI_TEXT[locale];
 
   useEffect(() => {
     const loader = scenarioModules[chapterId];
@@ -53,16 +57,16 @@ export function AgentLoopSimulator({ chapterId }: AgentLoopSimulatorProps) {
   if (!scenario) {
     return (
       <div className="flex h-64 items-center justify-center text-sm text-zinc-500">
-        该章节暂无模拟场景
+        {t.sim_no_scenario}
       </div>
     );
   }
 
   return (
     <section>
-      <h2 className="mb-2 text-xl font-semibold">Agent 循环模拟器</h2>
+      <h2 className="mb-2 text-xl font-semibold">{t.sim_title}</h2>
       <p className="mb-4 text-sm text-zinc-400">
-        {scenario.description}
+        {getLocalizedText(scenario.description, locale)}
       </p>
 
       <div className="overflow-hidden rounded-xl border border-zinc-700">
@@ -87,7 +91,7 @@ export function AgentLoopSimulator({ chapterId }: AgentLoopSimulatorProps) {
         >
           {sim.visibleSteps.length === 0 && (
             <div className="flex flex-1 items-center justify-center text-sm text-zinc-500">
-              点击 播放 或 单步 开始模拟
+              {t.sim_start_hint}
             </div>
           )}
           <AnimatePresence mode="popLayout">

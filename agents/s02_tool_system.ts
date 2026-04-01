@@ -7,7 +7,7 @@
  * 3. Schema 验证
  * 4. 工具分类 (核心/协作/条件/MCP动态)
  *
- * 对应源码:
+ * Source: 
  *   src/Tool.ts     → 工具基类 (29KB)
  *   src/tools.ts    → 注册中心 (17KB)
  *   src/tools/*/    → 50+ 工具目录
