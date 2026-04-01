@@ -1,7 +1,13 @@
 {
   "version": "ch02",
-  "title": "查询引擎",
-  "description": "QueryEngine 的核心循环：用户输入 → API 调用 → 工具执行 → 结果回传，直到模型说 stop",
+  "title": {
+    "zh": "工具架构",
+    "en": "Tool Architecture"
+  },
+  "description": {
+    "zh": "QueryEngine 的核心循环：用户输入 → API 调用 → 工具执行 → 结果回传，直到模型说 stop",
+    "en": "QueryEngine 的核心循环：用户输入 → API 调用 → 工具执行 → 结果回传，直到模型说 stop"
+  },
   "steps": [
     {
       "type": "user_message",

@@ -507,3 +507,19 @@ export const ARCH_LAYERS_I18N: Record<Locale, Array<{ name: string; files: strin
     { name: "Hidden Features (Feature Flags)", color: "#F59E0B", files: "buddy/ + ultraplan + undercover + daemon + kairos", size: "500KB+" },
   ],
 };
+
+/* ─── 本地化文本辅助函数 ─── */
+import { LocalizedText } from "@/types/agent-data";
+
+/**
+ * 获取本地化文本
+ * @param text 本地化文本对象或字符串
+ * @param locale 语言（默认中文）
+ * @returns 对应语言的文本
+ */
+export function getLocalizedText(text: LocalizedText, locale: Locale = "zh"): string {
+  if (typeof text === "string") {
+    return text;
+  }
+  return text[locale] || text.zh;
+}

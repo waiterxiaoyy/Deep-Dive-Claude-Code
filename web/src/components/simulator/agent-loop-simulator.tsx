@@ -6,6 +6,7 @@ import { useSimulator } from "@/hooks/useSimulator";
 import { SimulatorControls } from "./simulator-controls";
 import { SimulatorMessage } from "./simulator-message";
 import type { Scenario } from "@/types/agent-data";
+import { getLocalizedText } from "@/lib/i18n";
 
 // 新章节 → 旧场景文件映射
 const scenarioModules: Record<string, () => Promise<{ default: Scenario }>> = {
@@ -62,7 +63,7 @@ export function AgentLoopSimulator({ chapterId }: AgentLoopSimulatorProps) {
     <section>
       <h2 className="mb-2 text-xl font-semibold">Agent 循环模拟器</h2>
       <p className="mb-4 text-sm text-zinc-400">
-        {scenario.description}
+        {getLocalizedText(scenario.description)}
       </p>
 
       <div className="overflow-hidden rounded-xl border border-zinc-700">

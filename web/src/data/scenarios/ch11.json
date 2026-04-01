@@ -1,1 +1,55 @@
-{"version":"ch11","title":"CLI 传输层","description":"4 种传输协议 + 结构化 IO + React Ink 终端渲染","steps":[{"type":"system_event","content":"传输层初始化:\n  检测运行环境...\n  → 本地终端 → 使用 stdio 传输","annotation":"自动选择最优传输协议"},{"type":"user_message","content":"帮我检查代码","annotation":"用户通过 stdin 输入"},{"type":"system_event","content":"stdio 传输:\n  stdin → JSON-RPC 解析\n  { method: 'message', params: { content: '...' } }","annotation":"标准输入/输出，零配置"},{"type":"system_event","content":"React Ink 渲染终端 UI:\n  <Box flexDirection='column'>\n    <Spinner /> 正在思考...\n    <ToolStatus tool='FileRead' />\n  </Box>","annotation":"终端中使用 React 组件渲染!"},{"type":"tool_call","content":"FileRead → src/index.ts","toolName":"FileRead","annotation":"工具调用通过传输层发送"},{"type":"tool_result","content":"// src/index.ts\nexport function main() { ... }","toolName":"FileRead","annotation":"工具结果通过传输层返回"},{"type":"system_event","content":"结构化 IO 输出:\n{\n  type: 'tool_result',\n  tool: 'FileRead',\n  content: '...',\n  duration: 42\n}","annotation":"SDK 模式: JSON 格式，机器可解析"},{"type":"assistant_text","content":"代码检查完成，一切正常!","annotation":"通过 stdout 输出给用户"}]}
+{
+  "version": "ch11",
+  "title": {
+    "zh": "启动流程",
+    "en": "Bootstrap"
+  },
+  "description": {
+    "zh": "4 种传输协议 + 结构化 IO + React Ink 终端渲染",
+    "en": "4 种传输协议 + 结构化 IO + React Ink 终端渲染"
+  },
+  "steps": [
+    {
+      "type": "system_event",
+      "content": "传输层初始化:\n  检测运行环境...\n  → 本地终端 → 使用 stdio 传输",
+      "annotation": "自动选择最优传输协议"
+    },
+    {
+      "type": "user_message",
+      "content": "帮我检查代码",
+      "annotation": "用户通过 stdin 输入"
+    },
+    {
+      "type": "system_event",
+      "content": "stdio 传输:\n  stdin → JSON-RPC 解析\n  { method: 'message', params: { content: '...' } }",
+      "annotation": "标准输入/输出，零配置"
+    },
+    {
+      "type": "system_event",
+      "content": "React Ink 渲染终端 UI:\n  <Box flexDirection='column'>\n    <Spinner /> 正在思考...\n    <ToolStatus tool='FileRead' />\n  </Box>",
+      "annotation": "终端中使用 React 组件渲染!"
+    },
+    {
+      "type": "tool_call",
+      "content": "FileRead → src/index.ts",
+      "toolName": "FileRead",
+      "annotation": "工具调用通过传输层发送"
+    },
+    {
+      "type": "tool_result",
+      "content": "// src/index.ts\nexport function main() { ... }",
+      "toolName": "FileRead",
+      "annotation": "工具结果通过传输层返回"
+    },
+    {
+      "type": "system_event",
+      "content": "结构化 IO 输出:\n{\n  type: 'tool_result',\n  tool: 'FileRead',\n  content: '...',\n  duration: 42\n}",
+      "annotation": "SDK 模式: JSON 格式，机器可解析"
+    },
+    {
+      "type": "assistant_text",
+      "content": "代码检查完成，一切正常!",
+      "annotation": "通过 stdout 输出给用户"
+    }
+  ]
+}

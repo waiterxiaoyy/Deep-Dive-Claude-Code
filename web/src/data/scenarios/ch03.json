@@ -1,1 +1,48 @@
-{"version":"ch03","title":"提示词工程","description":"System Prompt 的 4 层动态组装过程：基础身份 → 工具定义 → CLAUDE.md → 动态上下文","steps":[{"type":"system_event","content":"开始组装 System Prompt...","annotation":"Prompt 不是静态字符串，而是动态管线"},{"type":"system_event","content":"L1: 注入基础身份\n\"You are Claude, an AI programming assistant...\"\n~2K tokens","annotation":"定义 AI 的角色和行为规范"},{"type":"system_event","content":"L2: 注入 50+ 工具 Schema\nFileRead: { path: string }\nFileEdit: { path, old_str, new_str }\nBashTool: { command: string }\n... (50+ more)\n~15K tokens","annotation":"告诉模型可以使用哪些工具"},{"type":"system_event","content":"L3: 搜索 CLAUDE.md\n✗ ~/.claude/CLAUDE.md\n✓ ~/project/CLAUDE.md → 找到!\n\n规则: [TypeScript strict, 先测试再提交]\n~5K tokens","annotation":"项目级配置注入，逐级向上搜索"},{"type":"system_event","content":"L4: 注入动态上下文\n打开文件: auth.ts, index.ts\nGit 分支: fix/login-bug\nLSP 诊断: 2 errors\n~8K tokens","annotation":"当前环境信息，每次请求动态生成"},{"type":"system_event","content":"最终 System Prompt: ~30K tokens\n由 4 层管线动态组装完成","annotation":"实际的 prompt 比你想象的大得多"},{"type":"user_message","content":"帮我修复 auth.ts 的 bug","annotation":"用户输入 + 30K system prompt 一起发送给模型"}]}
+{
+  "version": "ch03",
+  "title": {
+    "zh": "提示词工程",
+    "en": "Prompt Engineering"
+  },
+  "description": {
+    "zh": "System Prompt 的 4 层动态组装过程：基础身份 → 工具定义 → CLAUDE.md → 动态上下文",
+    "en": "System Prompt 的 4 层动态组装过程：基础身份 → 工具定义 → CLAUDE.md → 动态上下文"
+  },
+  "steps": [
+    {
+      "type": "system_event",
+      "content": "开始组装 System Prompt...",
+      "annotation": "Prompt 不是静态字符串，而是动态管线"
+    },
+    {
+      "type": "system_event",
+      "content": "L1: 注入基础身份\n\"You are Claude, an AI programming assistant...\"\n~2K tokens",
+      "annotation": "定义 AI 的角色和行为规范"
+    },
+    {
+      "type": "system_event",
+      "content": "L2: 注入 50+ 工具 Schema\nFileRead: { path: string }\nFileEdit: { path, old_str, new_str }\nBashTool: { command: string }\n... (50+ more)\n~15K tokens",
+      "annotation": "告诉模型可以使用哪些工具"
+    },
+    {
+      "type": "system_event",
+      "content": "L3: 搜索 CLAUDE.md\n✗ ~/.claude/CLAUDE.md\n✓ ~/project/CLAUDE.md → 找到!\n\n规则: [TypeScript strict, 先测试再提交]\n~5K tokens",
+      "annotation": "项目级配置注入，逐级向上搜索"
+    },
+    {
+      "type": "system_event",
+      "content": "L4: 注入动态上下文\n打开文件: auth.ts, index.ts\nGit 分支: fix/login-bug\nLSP 诊断: 2 errors\n~8K tokens",
+      "annotation": "当前环境信息，每次请求动态生成"
+    },
+    {
+      "type": "system_event",
+      "content": "最终 System Prompt: ~30K tokens\n由 4 层管线动态组装完成",
+      "annotation": "实际的 prompt 比你想象的大得多"
+    },
+    {
+      "type": "user_message",
+      "content": "帮我修复 auth.ts 的 bug",
+      "annotation": "用户输入 + 30K system prompt 一起发送给模型"
+    }
+  ]
+}

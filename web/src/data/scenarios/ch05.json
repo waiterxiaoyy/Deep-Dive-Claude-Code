@@ -1,7 +1,13 @@
 {
   "version": "ch05",
-  "title": "Shell 安全",
-  "description": "BashTool 的 7 层安全分类引擎：每条命令经过解析 → 模式匹配 → 路径验证 → AI 分类，决定是否执行",
+  "title": {
+    "zh": "文件操作与权限",
+    "en": "File Operations & Permissions"
+  },
+  "description": {
+    "zh": "BashTool 的 7 层安全分类引擎：每条命令经过解析 → 模式匹配 → 路径验证 → AI 分类，决定是否执行",
+    "en": "BashTool 的 7 层安全分类引擎：每条命令经过解析 → 模式匹配 → 路径验证 → AI 分类，决定是否执行"
+  },
   "steps": [
     {
       "type": "user_message",

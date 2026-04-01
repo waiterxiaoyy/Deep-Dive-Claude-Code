@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import type { SimStep } from "@/types/agent-data";
+import { getLocalizedText } from "@/lib/i18n";
 import { User, Bot, Terminal, ArrowRight, AlertCircle } from "lucide-react";
 
 interface SimulatorMessageProps {
@@ -75,18 +76,18 @@ export function SimulatorMessage({ step }: SimulatorMessageProps) {
 
       {step.type === "tool_call" || step.type === "tool_result" ? (
         <pre className="overflow-x-auto whitespace-pre-wrap rounded bg-zinc-950 p-2.5 font-mono text-xs leading-relaxed text-zinc-100">
-          {step.content || "(empty)"}
+          {getLocalizedText(step.content) || "(empty)"}
         </pre>
       ) : step.type === "system_event" ? (
         <pre className="overflow-x-auto whitespace-pre-wrap rounded bg-purple-950 p-2.5 font-mono text-xs leading-relaxed text-purple-100">
-          {step.content}
+          {getLocalizedText(step.content)}
         </pre>
       ) : (
-        <p className="text-sm leading-relaxed text-zinc-200">{step.content}</p>
+        <p className="text-sm leading-relaxed text-zinc-200">{getLocalizedText(step.content)}</p>
       )}
 
       <p className="mt-2 text-xs italic text-zinc-500">
-        {step.annotation}
+        {getLocalizedText(step.annotation)}
       </p>
     </motion.div>
   );

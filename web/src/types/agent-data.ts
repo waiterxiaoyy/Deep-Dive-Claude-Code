@@ -1,13 +1,18 @@
+export type LocalizedText = {
+  zh: string;
+  en: string;
+} | string;
+
 export interface SimStep {
   type: "user_message" | "assistant_text" | "tool_call" | "tool_result" | "system_event";
-  content: string;
+  content: LocalizedText;
   toolName?: string;
-  annotation: string;
+  annotation: LocalizedText;
 }
 
 export interface Scenario {
   version: string;
-  title: string;
-  description: string;
+  title: LocalizedText;
+  description: LocalizedText;
   steps: SimStep[];
 }
